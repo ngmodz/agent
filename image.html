@@ -20,11 +20,24 @@
     <meta name="apple-mobile-web-app-status-bar" content="#007bff">
     <!-- iOS splash screen image -->
     <link rel="apple-touch-startup-image" href="icons/viralgurux-512x512.png">
+    <!-- Responsive header styles -->
+    <style>
+        @media (max-width: 768px) {
+            .header-title {
+                font-size: 2.2em !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .header-title {
+                font-size: 1.8em !important;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1 style="font-size: 2.5em; margin-bottom: 10px;"><a href="index.html" style="text-decoration: none; color: #000000; font-weight: bold;">Image</a></h1>
+            <h1 class="header-title" style="font-size: 2.5em; margin-bottom: 10px;"><a href="index.html" style="text-decoration: none; color: #000000; font-weight: bold;">Image</a></h1>
         </header>
         <div class="content-container">
             <h2>Hello</h2>
