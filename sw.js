@@ -1,12 +1,13 @@
 // Service Worker for Agent PWA
 
-const CACHE_NAME = 'agent-cache-v3';
+const CACHE_NAME = 'agent-cache-v4';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './image.html',
   './style.css',
   './script.js',
+  './image.js',
   './services.json',
   './manifest.json',
   './offline.html',
