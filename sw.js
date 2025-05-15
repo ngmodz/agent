@@ -9,9 +9,9 @@ const ASSETS_TO_CACHE = [
   './services.json',
   './manifest.json',
   './offline.html',
-  './icons/icon-192x192.png',
-  './icons/icon-512x512.png',
-  'https://iili.io/3g5x9Xs.png' // Favicon
+  './icons/viralgurux-192x192.png',
+  './icons/viralgurux-512x512.png',
+  './apple-touch-icon.png'
 ];
 
 // Install event - cache assets
@@ -51,10 +51,10 @@ self.addEventListener('fetch', (event) => {
         if (response) {
           return response;
         }
-        
+
         // Clone the request - a request can only be used once
         const fetchRequest = event.request.clone();
-        
+
         // Otherwise fetch from network
         return fetch(fetchRequest)
           .then((response) => {
@@ -62,29 +62,29 @@ self.addEventListener('fetch', (event) => {
             if (!response || response.status !== 200 || response.type !== 'basic') {
               return response;
             }
-            
+
             // Clone the response - a response can only be used once
             const responseToCache = response.clone();
-            
+
             // Store the response in cache for later
             caches.open(CACHE_NAME)
               .then((cache) => {
                 cache.put(event.request, responseToCache);
               });
-            
+
             return response;
           })
           .catch((error) => {
             console.log('Fetch failed:', error);
-            
+
             // Check if the request is for a page (HTML)
             if (event.request.mode === 'navigate') {
               return caches.match('./offline.html');
             }
-            
+
             // For other resources, just return a simple error
             return new Response('Network error occurred. Please check your connection.');
           });
       })
   );
-}); 
+});
