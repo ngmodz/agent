@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Agent</title>
+    <title>Image</title>
     <link rel="stylesheet" href="style.css">
     <!-- Web standard icon -->
     <link rel="icon" href="icons/viralgurux-192x192.png">
@@ -24,31 +24,21 @@
 <body>
     <div class="container">
         <header>
-            <h1 style="font-size: 2.5em; margin-bottom: 10px;"><a href="image.html" style="text-decoration: none; color: #000000; font-weight: bold;">Agent</a></h1>
-            <p>Ask about our social media services (e.g., "cheapest Instagram views", "YouTube subscribers price")</p>
+            <h1 style="font-size: 2.5em; margin-bottom: 10px;"><a href="index.html" style="text-decoration: none; color: #000000; font-weight: bold;">Image</a></h1>
         </header>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Enter your query...">
-            <button id="searchButton">Search</button>
-        </div>
-        <!-- Sort container initially hidden but made visible when results are available -->
-        <div class="sort-container" id="sortContainer">
-            <label for="sortDropdown">Sort by:</label>
-            <select id="sortDropdown">
-                <option value="default">Default</option>
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option>
-                <option value="time-asc">Delivery Time: Fastest First</option>
-            </select>
-        </div>
-        <div id="resultsContainer">
-            <!-- Results will be displayed here -->
+        <div class="content-container">
+            <h2>Hello</h2>
         </div>
         <footer>
             <p>Powered by AI</p>
         </footer>
     </div>
-    <script src="script.js"></script>
+    <script>
+        // Simple script to handle navigation
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add any page-specific JavaScript here if needed
+        });
+    </script>
     <!-- PWA Service Worker Registration -->
     <script>
         if ('serviceWorker' in navigator) {
