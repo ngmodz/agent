@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA Icon Generator</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .canvas-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .instructions {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .download-links {
+            margin-top: 30px;
+        }
+        a.download-btn {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>PWA Icon Generator</h1>
+    
+    <div class="instructions">
+        <h2>Instructions:</h2>
+        <p>1. Click the "Generate Icons" button below to create PNG icons</p>
+        <p>2. Click the download links to save each icon</p>
+        <p>3. Move the downloaded icon files to your "icons" folder</p>
+    </div>
+    
+    <button id="generateBtn">Generate Icons</button>
+    
+    <div class="canvas-container">
+        <h3>192x192 Icon Preview:</h3>
+        <canvas id="canvas192" width="192" height="192"></canvas>
+    </div>
+    
+    <div class="canvas-container">
+        <h3>512x512 Icon Preview:</h3>
+        <canvas id="canvas512" width="512" height="512"></canvas>
+    </div>
+    
+    <div class="download-links" id="downloadLinks" style="display: none;">
+        <h3>Download Icons:</h3>
+        <div id="linkContainer"></div>
+    </div>
+    
+    <script>
+        document.getElementById('generateBtn').addEventListener('click', generateIcons);
+        
+        function generateIcons() {
+            // Generate 192x192 icon
+            const canvas192 = document.getElementById('canvas192');
+            const ctx192 = canvas192.getContext('2d');
+            
+            // Background color
+            ctx192.fillStyle = '#007bff';
+            ctx192.fillRect(0, 0, 192, 192);
+            
+            // Text
+            ctx192.fillStyle = 'white';
+            ctx192.font = 'bold 48px Arial';
+            ctx192.textAlign = 'center';
+            ctx192.textBaseline = 'middle';
+            ctx192.fillText('Agent', 96, 96);
+            
+            // Generate 512x512 icon
+            const canvas512 = document.getElementById('canvas512');
+            const ctx512 = canvas512.getContext('2d');
+            
+            // Background color
+            ctx512.fillStyle = '#007bff';
+            ctx512.fillRect(0, 0, 512, 512);
+            
+            // Text
+            ctx512.fillStyle = 'white';
+            ctx512.font = 'bold 128px Arial';
+            ctx512.textAlign = 'center';
+            ctx512.textBaseline = 'middle';
+            ctx512.fillText('Agent', 256, 256);
+            
+            // Show download links
+            createDownloadLinks();
+            document.getElementById('downloadLinks').style.display = 'block';
+        }
+        
+        function createDownloadLinks() {
+            const linkContainer = document.getElementById('linkContainer');
+            linkContainer.innerHTML = '';
+            
+            // Create download link for 192x192
+            const link192 = document.createElement('a');
+            link192.textContent = 'Download 192x192 Icon';
+            link192.href = document.getElementById('canvas192').toDataURL('image/png');
+            link192.download = 'icon-192x192.png';
+            link192.className = 'download-btn';
+            linkContainer.appendChild(link192);
+            
+            // Create download link for 512x512
+            const link512 = document.createElement('a');
+            link512.textContent = 'Download 512x512 Icon';
+            link512.href = document.getElementById('canvas512').toDataURL('image/png');
+            link512.download = 'icon-512x512.png';
+            link512.className = 'download-btn';
+            linkContainer.appendChild(link512);
+        }
+    </script>
+</body>
+</html> 

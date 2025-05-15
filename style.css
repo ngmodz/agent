@@ -200,14 +200,38 @@ footer {
         flex-direction: column;
         align-items: flex-start;
         width: 100%;
+        background-color: #f8f9fa;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
     .sort-container label {
-        margin-bottom: 5px;
+        margin-bottom: 8px;
         display: block;
+        font-weight: 600;
+        color: #333;
+        font-size: 0.95em;
     }
     #sortDropdown {
         width: 100%;
-        margin-top: 5px;
+        height: 44px;
+        margin-top: 0;
+        padding: 10px 12px;
+        font-size: 1em;
+        border: 1px solid #007bff;
+        border-radius: 6px;
+        background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%23007bff' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 8px 10px;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+    #sortDropdown:focus {
+        border-color: #0056b3;
+        outline: none;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
     }
     header {
         margin-bottom: 20px;

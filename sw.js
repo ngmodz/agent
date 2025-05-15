@@ -2,15 +2,15 @@
 
 const CACHE_NAME = 'agent-cache-v1';
 const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/style.css',
-  '/script.js',
-  '/services.json',
-  '/manifest.json',
-  '/offline.html',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png',
+  './',
+  './index.html',
+  './style.css',
+  './script.js',
+  './services.json',
+  './manifest.json',
+  './offline.html',
+  './icons/icon-192x192.png',
+  './icons/icon-512x512.png',
   'https://iili.io/3g5x9Xs.png' // Favicon
 ];
 
@@ -79,7 +79,7 @@ self.addEventListener('fetch', (event) => {
             
             // Check if the request is for a page (HTML)
             if (event.request.mode === 'navigate') {
-              return caches.match('/offline.html');
+              return caches.match('./offline.html');
             }
             
             // For other resources, just return a simple error

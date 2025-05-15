@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let servicesData = [];
     let dataLoaded = false;
     let currentResults = []; // Store current search results
+    // Check if we're on a mobile device
+    const isMobile = window.matchMedia('(max-width: 600px)').matches;
 
     // Ensure sort container is initially hidden
     if (sortContainer) {
@@ -73,12 +75,58 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!sortContainer) return;
         
         if (hasResults) {
-            sortContainer.style.display = 'flex';
+            // For mobile devices, add a smooth animation when showing the dropdown
+            if (isMobile) {
+                sortContainer.style.opacity = '0';
+                sortContainer.style.display = 'flex';
+                sortContainer.style.transform = 'translateY(-10px)';
+                sortContainer.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                
+                // Force a reflow before applying the animation
+                sortContainer.offsetHeight;
+                
+                sortContainer.style.opacity = '1';
+                sortContainer.style.transform = 'translateY(0)';
+            } else {
+                sortContainer.style.display = 'flex';
+            }
             console.log('Making sort container visible:', sortContainer.style.display);
+            
+            // Add click event listener to dropdown for mobile to improve touch interaction
+            if (isMobile && sortDropdown) {
+                enhanceMobileDropdown();
+            }
         } else {
             sortContainer.style.display = 'none';
             console.log('Hiding sort container:', sortContainer.style.display);
         }
+    }
+    
+    // Function to enhance mobile dropdown behavior
+    function enhanceMobileDropdown() {
+        // Make sure we only add the event once
+        if (sortDropdown.dataset.enhanced) return;
+        
+        sortDropdown.dataset.enhanced = 'true';
+        
+        // Add a subtle animation when opening the dropdown
+        sortDropdown.addEventListener('focus', () => {
+            sortDropdown.style.transform = 'scale(1.02)';
+            sortDropdown.style.transition = 'transform 0.2s ease';
+        });
+        
+        sortDropdown.addEventListener('blur', () => {
+            sortDropdown.style.transform = 'scale(1)';
+        });
+        
+        // Add vibration feedback on mobile if supported
+        sortDropdown.addEventListener('change', () => {
+            if ('vibrate' in navigator) {
+                navigator.vibrate(20); // Short vibration for feedback
+            }
+        });
+        
+        console.log('Mobile dropdown enhancements applied');
     }
 
     function performSearch() {
