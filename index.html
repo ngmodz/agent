@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Viralgurux Agent</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="icons/viralgurux-192x192.png" type="image/png">
@@ -13,18 +13,23 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Viralgurux">
-    <!-- iOS icon tags -->
-    <link rel="apple-touch-icon" sizes="192x192" href="icons/viralgurux-192x192.png">
-    <link rel="apple-touch-icon" sizes="512x512" href="icons/viralgurux-512x512.png">
+    <!-- iOS icon tags - precomposed prevents iOS from adding effects -->
+    <link rel="apple-touch-icon-precomposed" href="icons/viralgurux-192x192.png">
+    <link rel="apple-touch-icon-precomposed" sizes="192x192" href="icons/viralgurux-192x192.png">
+    <link rel="apple-touch-icon-precomposed" sizes="512x512" href="icons/viralgurux-512x512.png">
+    <!-- Standard icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/viralgurux-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icons/viralgurux-512x512.png">
     <!-- iOS splash screen images -->
-    <link rel="apple-touch-startup-image" href="icons/viralgurux-512x512.png">
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="icons/viralgurux-512x512.png">
+    <link rel="apple-touch-startup-image" media="screen and (device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="icons/viralgurux-512x512.png">
     <!-- iOS specific meta -->
     <meta name="apple-mobile-web-app-status-bar" content="#007bff">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Viralgurux Agent</h1>
+            <h1>Agent</h1>
             <p>Ask about our social media services (e.g., "cheapest Instagram views", "YouTube subscribers price")</p>
         </header>
         <div class="search-container">
