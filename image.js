@@ -123,9 +123,16 @@ document.addEventListener('DOMContentLoaded', () => {
         imageCanvas.width = width;
         imageCanvas.height = height;
 
-        // Draw pure white background
+        // Draw purple borders at top and bottom
+        ctx.fillStyle = '#B598E4';
+        // Top border - full width, 15px height
+        ctx.fillRect(0, 0, width, 15);
+        // Bottom border - full width, 15px height
+        ctx.fillRect(0, height - 15, width, 15);
+
+        // Draw white background for the content area
         ctx.fillStyle = '#FFFFFF';
-        ctx.fillRect(0, 0, width, height);
+        ctx.fillRect(0, 15, width, height - 30);
 
         // Draw black text content
         drawBlackTextContent(ctx, width, height);
@@ -136,10 +143,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Set black text color
         ctx.fillStyle = '#000000';
 
-        // Calculate font sizes based on canvas dimensions
-        const titleSize = Math.floor(width * 0.05);
-        const subtitleSize = Math.floor(width * 0.035);
-        const detailSize = Math.floor(width * 0.03);
+        // Calculate font sizes based on canvas dimensions (increased for better visibility)
+        const titleSize = Math.floor(width * 0.06);
+        const subtitleSize = Math.floor(width * 0.045);
+        const detailSize = Math.floor(width * 0.04);
 
         // Set text alignment
         ctx.textAlign = 'center';
@@ -176,21 +183,8 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
         ctx.fillText('Viralgurux', width / 2, height * 0.95);
 
-        // Add horizontal borders with #B598E4 color
-        ctx.strokeStyle = '#B598E4';
-        ctx.lineWidth = 3;
-
-        // Top border
-        ctx.beginPath();
-        ctx.moveTo(0, 10);
-        ctx.lineTo(width, 10);
-        ctx.stroke();
-
-        // Bottom border
-        ctx.beginPath();
-        ctx.moveTo(0, height - 10);
-        ctx.lineTo(width, height - 10);
-        ctx.stroke();
+        // We don't need to add borders here since we already added them in the generateImage function
+        // The watermark is the last element to be drawn
     }
 
     // Function to wrap text
