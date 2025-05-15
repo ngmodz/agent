@@ -68,11 +68,13 @@ header p {
 }
 
 .sort-container {
-    display: flex;
+    display: none;
     align-items: center;
     margin-bottom: 15px;
     padding-bottom: 10px;
     border-bottom: 1px solid #eee;
+    position: relative;
+    z-index: 1;
 }
 
 .sort-container label {
@@ -90,6 +92,7 @@ header p {
     color: #333;
     cursor: pointer;
     outline: none;
+    min-width: 180px;
 }
 
 #sortDropdown:focus {

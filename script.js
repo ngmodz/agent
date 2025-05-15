@@ -8,8 +8,20 @@ document.addEventListener('DOMContentLoaded', () => {
     let dataLoaded = false;
     let currentResults = []; // Store current search results
 
+    // Ensure sort container is initially hidden
+    if (sortContainer) {
+        sortContainer.style.display = 'none';
+        console.log('Sort container display set to none on initial load');
+    } else {
+        console.error('Sort container element not found!');
+    }
+
     // Show loading message
     resultsContainer.innerHTML = '<p class="no-results">Loading services data, please wait...</p>';
+
+    // Log initial element state for debugging
+    console.log('Sort container found:', sortContainer !== null);
+    console.log('Initial sort container display style:', sortContainer ? sortContainer.style.display : 'element not found');
 
     // Fetch services data
     fetch('services.json')
@@ -56,17 +68,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Helper function to ensure sort visibility based on results
+    function updateSortContainerVisibility(hasResults) {
+        if (!sortContainer) return;
+        
+        if (hasResults) {
+            sortContainer.style.display = 'flex';
+            console.log('Making sort container visible:', sortContainer.style.display);
+        } else {
+            sortContainer.style.display = 'none';
+            console.log('Hiding sort container:', sortContainer.style.display);
+        }
+    }
+
     function performSearch() {
         const query = searchInput.value.toLowerCase().trim();
         if (!query) {
             resultsContainer.innerHTML = '<p class="no-results">Please enter a search term.</p>';
-            sortContainer.style.display = 'none';
+            updateSortContainerVisibility(false);
             return;
         }
 
         if (!dataLoaded) {
             resultsContainer.innerHTML = '<p class="no-results">Services data is still loading. Please wait and try again.</p>';
-            sortContainer.style.display = 'none';
+            updateSortContainerVisibility(false);
             return;
         }
 
@@ -198,8 +223,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Store current results
         currentResults = results;
         
-        // Show sort container if we have results
-        sortContainer.style.display = results.length > 0 ? 'flex' : 'none';
+        // Update sort container visibility
+        updateSortContainerVisibility(results.length > 0);
         
         displayResults(results);
     }
@@ -279,9 +304,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p class="no-results">No services found matching your query.</p>
                 <p class="no-results">Try a different search term or check your browser console for debugging information.</p>
             `;
-            sortContainer.style.display = 'none';
+            updateSortContainerVisibility(false);
             return;
         }
+
+        // Ensure sort container is visible with results
+        updateSortContainerVisibility(true);
 
         results.forEach(service => {
             const serviceElement = document.createElement('div');
