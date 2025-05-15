@@ -67,6 +67,36 @@ header p {
     background-color: #0056b3;
 }
 
+.sort-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.sort-container label {
+    margin-right: 10px;
+    font-weight: 500;
+    color: #444;
+}
+
+#sortDropdown {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+    font-size: 0.9em;
+    color: #333;
+    cursor: pointer;
+    outline: none;
+}
+
+#sortDropdown:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.1rem rgba(0,123,255,.2);
+}
+
 #resultsContainer {
     margin-top: 20px;
 }
@@ -124,14 +154,21 @@ footer {
     .container {
         padding: 15px;
     }
-    .search-container {
+    .search-container,
+    .sort-container {
         flex-direction: column;
+        align-items: flex-start;
     }
-    #searchInput {
+    #searchInput,
+    #sortDropdown {
         border-radius: 4px;
         margin-bottom: 10px;
+        width: 100%;
     }
     #searchButton {
         border-radius: 4px;
+    }
+    .sort-container label {
+        margin-bottom: 5px;
     }
 }

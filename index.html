@@ -16,6 +16,15 @@
             <input type="text" id="searchInput" placeholder="Enter your query...">
             <button id="searchButton">Search</button>
         </div>
+        <div class="sort-container" id="sortContainer" style="display: none;">
+            <label for="sortDropdown">Sort by:</label>
+            <select id="sortDropdown">
+                <option value="default">Default</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="time-asc">Delivery Time: Fastest First</option>
+            </select>
+        </div>
         <div id="resultsContainer">
             <!-- Results will be displayed here -->
         </div>

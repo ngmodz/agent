@@ -2,8 +2,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('searchInput');
     const searchButton = document.getElementById('searchButton');
     const resultsContainer = document.getElementById('resultsContainer');
+    const sortContainer = document.getElementById('sortContainer');
+    const sortDropdown = document.getElementById('sortDropdown');
     let servicesData = [];
     let dataLoaded = false;
+    let currentResults = []; // Store current search results
 
     // Show loading message
     resultsContainer.innerHTML = '<p class="no-results">Loading services data, please wait...</p>';
@@ -45,15 +48,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Add event listener for sort dropdown
+    sortDropdown.addEventListener('change', () => {
+        if (currentResults.length > 0) {
+            sortResults(currentResults);
+            displayResults(currentResults);
+        }
+    });
+
     function performSearch() {
         const query = searchInput.value.toLowerCase().trim();
         if (!query) {
             resultsContainer.innerHTML = '<p class="no-results">Please enter a search term.</p>';
+            sortContainer.style.display = 'none';
             return;
         }
 
         if (!dataLoaded) {
             resultsContainer.innerHTML = '<p class="no-results">Services data is still loading. Please wait and try again.</p>';
+            sortContainer.style.display = 'none';
             return;
         }
 
@@ -179,6 +192,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         
+        // Reset the sort dropdown to default
+        sortDropdown.value = 'default';
+        
+        // Store current results
+        currentResults = results;
+        
+        // Show sort container if we have results
+        sortContainer.style.display = results.length > 0 ? 'flex' : 'none';
+        
         displayResults(results);
     }
     
@@ -214,6 +236,41 @@ document.addEventListener('DOMContentLoaded', () => {
         return totalMinutes;
     }
 
+    // Function to sort results based on dropdown selection
+    function sortResults(results) {
+        const sortType = sortDropdown.value;
+        
+        switch (sortType) {
+            case 'price-asc':
+                results.sort((a, b) => {
+                    const priceA = parseFloat((a.price_per_1000_inr || '').replace('₹', '')) || Infinity;
+                    const priceB = parseFloat((b.price_per_1000_inr || '').replace('₹', '')) || Infinity;
+                    return priceA - priceB;
+                });
+                break;
+                
+            case 'price-desc':
+                results.sort((a, b) => {
+                    const priceA = parseFloat((a.price_per_1000_inr || '').replace('₹', '')) || Infinity;
+                    const priceB = parseFloat((b.price_per_1000_inr || '').replace('₹', '')) || Infinity;
+                    return priceB - priceA;
+                });
+                break;
+                
+            case 'time-asc':
+                results.sort((a, b) => {
+                    const timeA = parseAvgTime(a.avg_delivery_time);
+                    const timeB = parseAvgTime(b.avg_delivery_time);
+                    return timeA - timeB;
+                });
+                break;
+                
+            // Default case - no sorting needed as we'll use the original order
+            default:
+                break;
+        }
+    }
+
     function displayResults(results) {
         resultsContainer.innerHTML = ''; // Clear previous results
 
@@ -222,6 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p class="no-results">No services found matching your query.</p>
                 <p class="no-results">Try a different search term or check your browser console for debugging information.</p>
             `;
+            sortContainer.style.display = 'none';
             return;
         }
 
