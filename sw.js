@@ -1,7 +1,7 @@
 // Service Worker for Agent PWA
 
 // Increment cache version to invalidate previous caches
-const CACHE_NAME = 'agent-cache-v5';
+const CACHE_NAME = 'agent-cache-v6';
 
 // Files that should be cached but can be served from network first
 const NETWORK_FIRST_ASSETS = [
@@ -11,6 +11,7 @@ const NETWORK_FIRST_ASSETS = [
   './style.css',
   './script.js',
   './image.js',
+  './page-transitions.js',
   './services.json'
 ];
 

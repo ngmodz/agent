@@ -4,7 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Image</title>
-    <link rel="stylesheet" href="style.css">
+    
+    <!-- Cache control meta tags -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="style.css?v=1.0.1" as="style">
+    <link rel="preload" href="page-transitions.js?v=1.0.1" as="script">
+    <link rel="preload" href="index.html" as="document">
+    
+    <link rel="stylesheet" href="style.css?v=1.0.1">
     <!-- Web standard icon -->
     <link rel="icon" href="icons/viralgurux-192x192.png">
     <!-- PWA Meta Tags -->
@@ -193,9 +204,9 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" style="visibility: hidden;">
         <header>
-            <h1 class="header-title" style="font-size: 2.5em; margin-bottom: 10px;"><a href="index.html" style="text-decoration: none; color: #000000; font-weight: bold;">Image</a></h1>
+            <h1 class="header-title" style="font-size: 2.5em; margin-bottom: 10px;"><a href="index.html" class="header-link">Image</a></h1>
         </header>
         <div class="content-container">
             <p>Create professional images for your social media marketing</p>
@@ -339,6 +350,8 @@
         </footer>
     </div>
     <script src="image.js?v=1.0.1"></script>
+    <!-- Add page transitions script -->
+    <script src="page-transitions.js?v=1.0.1"></script>
     <!-- PWA Service Worker Registration with Update on Reload -->
     <script>
         if ('serviceWorker' in navigator) {

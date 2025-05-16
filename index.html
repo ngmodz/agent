@@ -10,6 +10,11 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
 
+    <!-- Preload critical resources -->
+    <link rel="preload" href="style.css?v=1.0.1" as="style">
+    <link rel="preload" href="page-transitions.js?v=1.0.1" as="script">
+    <link rel="preload" href="image.html" as="document">
+
     <!-- Add version parameter to CSS to prevent caching -->
     <link rel="stylesheet" href="style.css?v=1.0.1">
 
@@ -43,9 +48,9 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" style="visibility: hidden;">
         <header>
-            <h1 class="header-title" style="font-size: 2.5em; margin-bottom: 10px;"><a href="image.html" style="text-decoration: none; color: #000000; font-weight: bold;">Agent</a></h1>
+            <h1 class="header-title" style="font-size: 2.5em; margin-bottom: 10px;"><a href="image.html" class="header-link">Agent</a></h1>
             <p>Ask about our social media services (e.g., "cheapest Instagram views", "YouTube subscribers price")</p>
         </header>
         <div class="search-container">
@@ -73,6 +78,8 @@
     <script src="reload.js?v=1.0.1"></script>
     <!-- Add version parameter to JS to prevent caching -->
     <script src="script.js?v=1.0.1"></script>
+    <!-- Add page transitions script -->
+    <script src="page-transitions.js?v=1.0.1"></script>
     <!-- PWA Service Worker Registration -->
     <script>
         if ('serviceWorker' in navigator) {
