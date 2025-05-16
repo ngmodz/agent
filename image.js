@@ -297,6 +297,11 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        
+        // Refresh the page after a short delay to ensure download starts first
+        setTimeout(() => {
+            window.location.reload();
+        }, 500);
     }
 
     // Initialize social media buttons
