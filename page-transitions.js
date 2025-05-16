@@ -34,25 +34,26 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Don't show content until everything is loaded
         if (container) {
-            // Use different approach based on which page we're on
-            // This helps fix the flash when going from image to agent page
-            if (currentPage === 'agent') {
-                // We need to ensure all critical resources are loaded before showing content
-                window.addEventListener('load', () => {
-                    // Short delay to ensure everything is rendered properly
-                    setTimeout(() => {
-                        // Position is set correctly before making visible
-                        container.style.visibility = 'visible';
-                        // Force browser to apply styles before animation
-                        window.getComputedStyle(container).opacity;
-                    }, 50);
-                });
-            } else {
-                // For image page, we can show content right away
-                window.addEventListener('load', () => {
+            // Use a consistent approach for both pages to prevent flash
+            window.addEventListener('load', () => {
+                // Force layout calculation before showing content
+                document.body.offsetHeight;
+                
+                // Short delay to ensure everything is properly rendered
+                setTimeout(() => {
+                    // Make container visible with proper position
                     container.style.visibility = 'visible';
-                });
-            }
+                    container.style.opacity = '1';
+                    
+                    // Force browser to apply styles
+                    window.getComputedStyle(container).opacity;
+                    
+                    // Remove the overlay if present
+                    if (overlay) {
+                        overlay.classList.remove('active');
+                    }
+                }, 50);
+            });
         }
     }
     
@@ -82,13 +83,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Show overlay
         overlay.classList.add('active');
         
-        // Different timing for different page transitions to prevent flash
-        const transitionDelay = isGoingToAgentPage && isMobile ? 550 : 400;
+        // Use consistent timing for both transitions to prevent flash
+        const transitionDelay = isMobile ? 550 : 450;
         
         // After overlay is visible, navigate to new page
         setTimeout(() => {
             window.location.href = targetUrl;
-        }, transitionDelay); // Longer transition when going to agent page on mobile
+        }, transitionDelay);
     }
     
     /**

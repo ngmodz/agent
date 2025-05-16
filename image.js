@@ -17,8 +17,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Format options
     const formatOptions = document.querySelectorAll('.format-option');
 
-    // Initialize social media buttons
-    initSocialMediaButtons();
+    // Force initialization after everything is loaded to avoid flash
+    window.addEventListener('load', () => {
+        // Initialize social media buttons
+        initSocialMediaButtons();
+    });
 
     // SVG constants for image generation
     const instagramLogoSVG = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="256" height="256" viewBox="0 0 256 256">

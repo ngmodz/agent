@@ -11,12 +11,12 @@
     <meta http-equiv="Expires" content="0">
     
     <!-- Preload critical resources -->
-    <link rel="preload" href="style.css?v=1.0.2" as="style">
-    <link rel="preload" href="page-transitions.js?v=1.0.2" as="script">
-    <link rel="preload" href="image.js?v=1.0.2" as="script">
+    <link rel="preload" href="style.css?v=1.0.3" as="style">
+    <link rel="preload" href="page-transitions.js?v=1.0.3" as="script">
+    <link rel="preload" href="image.js?v=1.0.3" as="script">
     <link rel="preload" href="index.html" as="document">
     
-    <link rel="stylesheet" href="style.css?v=1.0.2">
+    <link rel="stylesheet" href="style.css?v=1.0.3">
     <!-- Web standard icon -->
     <link rel="icon" href="icons/viralgurux-192x192.png">
     <!-- PWA Meta Tags -->
@@ -239,12 +239,12 @@
     </style>
 </head>
 <body>
-    <!-- Add overlay directly in HTML for immediate availability -->
+    <!-- Page overlay for transitions -->
     <div class="page-overlay"></div>
-    <div class="container" style="visibility: hidden;">
+    <div class="container" style="visibility: hidden; opacity: 0;">
         <header>
             <h1 class="header-title" style="font-size: 2.5em; margin-bottom: 10px;"><a href="index.html" class="header-link">Image</a></h1>
-            <p>Create professional images for your social media marketing</p>
+            <p>Create social media images for your marketing</p>
         </header>
         <div class="content-container">
             <!-- Main Form -->
@@ -385,42 +385,24 @@
             <p>Powered by AI</p>
         </footer>
     </div>
-    <script src="image.js?v=1.0.2"></script>
     <!-- Add page transitions script -->
-    <script src="page-transitions.js?v=1.0.2"></script>
-    <!-- PWA Service Worker Registration with Update on Reload -->
+    <script src="page-transitions.js?v=1.0.3"></script>
+    <!-- Add image generation script -->
+    <script src="image.js?v=1.0.3"></script>
+    <!-- PWA Service Worker Registration -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                // Add a timestamp parameter to force service worker update
-                navigator.serviceWorker.register('./sw.js?v=' + new Date().getTime())
+                navigator.serviceWorker.register('./sw.js?v=1.0.3')
                     .then(registration => {
                         console.log('Service Worker registered with scope:', registration.scope);
-
-                        // Check for service worker updates on each page load
+                        
+                        // Force update of service worker
                         registration.update();
-
-                        // Handle service worker updates
-                        registration.addEventListener('updatefound', () => {
-                            const newWorker = registration.installing;
-                            console.log('Service Worker update found!');
-
-                            newWorker.addEventListener('statechange', () => {
-                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    console.log('New content is available; please refresh.');
-                                    // You could show a notification to the user here
-                                }
-                            });
-                        });
                     })
                     .catch(error => {
                         console.error('Service Worker registration failed:', error);
                     });
-
-                // Handle service worker controlled pages
-                if (navigator.serviceWorker.controller) {
-                    console.log('This page is currently controlled by:', navigator.serviceWorker.controller);
-                }
             });
         }
     </script>

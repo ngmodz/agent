@@ -11,13 +11,13 @@
     <meta http-equiv="Expires" content="0">
 
     <!-- Preload critical resources -->
-    <link rel="preload" href="style.css?v=1.0.2" as="style">
-    <link rel="preload" href="page-transitions.js?v=1.0.2" as="script">
-    <link rel="preload" href="script.js?v=1.0.2" as="script">
+    <link rel="preload" href="style.css?v=1.0.3" as="style">
+    <link rel="preload" href="page-transitions.js?v=1.0.3" as="script">
+    <link rel="preload" href="script.js?v=1.0.3" as="script">
     <link rel="preload" href="image.html" as="document">
 
     <!-- Add version parameter to CSS to prevent caching -->
-    <link rel="stylesheet" href="style.css?v=1.0.2">
+    <link rel="stylesheet" href="style.css?v=1.0.3">
 
     <!-- Web standard icon -->
     <link rel="icon" href="icons/viralgurux-192x192.png">
@@ -51,7 +51,7 @@
 <body>
     <!-- Add overlay directly in HTML for immediate availability -->
     <div class="page-overlay"></div>
-    <div class="container" style="visibility: hidden;">
+    <div class="container" style="visibility: hidden; opacity: 0;">
         <header>
             <h1 class="header-title" style="font-size: 2.5em; margin-bottom: 10px;"><a href="image.html" class="header-link">Agent</a></h1>
             <p>Ask about our social media services (e.g., "cheapest Instagram views", "YouTube subscribers price")</p>
@@ -78,17 +78,17 @@
         </footer>
     </div>
     <!-- Add reload.js for cache invalidation -->
-    <script src="reload.js?v=1.0.2"></script>
+    <script src="reload.js?v=1.0.3"></script>
     <!-- Add version parameter to JS to prevent caching -->
-    <script src="script.js?v=1.0.2"></script>
+    <script src="script.js?v=1.0.3"></script>
     <!-- Add page transitions script -->
-    <script src="page-transitions.js?v=1.0.2"></script>
+    <script src="page-transitions.js?v=1.0.3"></script>
     <!-- PWA Service Worker Registration -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 // Add cache-busting parameter to service worker registration
-                navigator.serviceWorker.register('./sw.js?v=1.0.2')
+                navigator.serviceWorker.register('./sw.js?v=1.0.3')
                     .then(registration => {
                         console.log('Service Worker registered with scope:', registration.scope);
 
