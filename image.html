@@ -89,6 +89,17 @@
             border-color: #0062cc;
         }
 
+        .btn-secondary {
+            color: #fff;
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+
         .btn-block {
             display: block;
             width: 100%;
@@ -304,8 +315,9 @@
             <!-- Canvas for image generation -->
             <div id="canvasContainer">
                 <canvas id="imageCanvas"></canvas>
-                <div class="download-btn">
+                <div class="download-btn" style="display: flex; gap: 10px; justify-content: center;">
                     <button id="downloadBtn" class="btn btn-primary">Download Image</button>
+                    <button id="startOverBtn" class="btn btn-secondary">Start Over</button>
                 </div>
             </div>
         </div>
@@ -313,18 +325,40 @@
             <p>Powered by AI</p>
         </footer>
     </div>
-    <script src="image.js"></script>
-    <!-- PWA Service Worker Registration -->
+    <script src="image.js?v=1.0.1"></script>
+    <!-- PWA Service Worker Registration with Update on Reload -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
+                // Add a timestamp parameter to force service worker update
+                navigator.serviceWorker.register('./sw.js?v=' + new Date().getTime())
                     .then(registration => {
                         console.log('Service Worker registered with scope:', registration.scope);
+
+                        // Check for service worker updates on each page load
+                        registration.update();
+
+                        // Handle service worker updates
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            console.log('Service Worker update found!');
+
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    console.log('New content is available; please refresh.');
+                                    // You could show a notification to the user here
+                                }
+                            });
+                        });
                     })
                     .catch(error => {
                         console.error('Service Worker registration failed:', error);
                     });
+
+                // Handle service worker controlled pages
+                if (navigator.serviceWorker.controller) {
+                    console.log('This page is currently controlled by:', navigator.serviceWorker.controller);
+                }
             });
         }
     </script>

@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const canvasContainer = document.getElementById('canvasContainer');
     const submitFormBtn = document.getElementById('submitForm');
     const downloadBtn = document.getElementById('downloadBtn');
+    const startOverBtn = document.getElementById('startOverBtn');
     const imageCanvas = document.getElementById('imageCanvas');
 
     // Form input elements
@@ -73,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
         option.addEventListener('click', handleFormatSelection);
     });
     downloadBtn.addEventListener('click', handleDownload);
+    startOverBtn.addEventListener('click', handleStartOver);
 
     // Handle main form submission
     function handleFormSubmit(e) {
@@ -315,6 +317,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 categoryInput.value = button.dataset.value;
             });
         });
+    }
+
+    // Handle Start Over button click
+    function handleStartOver() {
+        // Reset form data
+        formData = {
+            category: '',
+            serviceName: '',
+            price: 0,
+            quantity: 0,
+            format: ''
+        };
+
+        // Reset form input values
+        serviceNameInput.value = '';
+        priceInput.value = '';
+        quantityInput.value = '';
+
+        // Reset social media buttons to default (Instagram)
+        const socialButtons = document.querySelectorAll('.social-btn');
+        socialButtons.forEach(btn => btn.classList.remove('selected'));
+        document.querySelector('.instagram-btn').classList.add('selected');
+        categoryInput.value = 'Instagram';
+
+        // Reset format options
+        formatOptions.forEach(option => {
+            option.classList.remove('selected');
+        });
+
+        // Hide canvas container and format selection, show main form
+        canvasContainer.style.display = 'none';
+        formatSelection.style.display = 'none';
+        mainForm.style.display = 'block';
     }
 
     // No longer need the createSVGElement function as we're using inline SVG
