@@ -4,7 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Agent</title>
-    <link rel="stylesheet" href="style.css">
+
+    <!-- Cache control meta tags -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <!-- Add version parameter to CSS to prevent caching -->
+    <link rel="stylesheet" href="style.css?v=1.0.1">
+
     <!-- Web standard icon -->
     <link rel="icon" href="icons/viralgurux-192x192.png">
     <!-- PWA Meta Tags -->
@@ -61,20 +69,39 @@
             <p>Powered by AI</p>
         </footer>
     </div>
-    <script src="script.js"></script>
+    <!-- Add reload.js for cache invalidation -->
+    <script src="reload.js?v=1.0.1"></script>
+    <!-- Add version parameter to JS to prevent caching -->
+    <script src="script.js?v=1.0.1"></script>
     <!-- PWA Service Worker Registration -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
+                // Add cache-busting parameter to service worker registration
+                navigator.serviceWorker.register('./sw.js?v=1.0.1')
                     .then(registration => {
                         console.log('Service Worker registered with scope:', registration.scope);
+
+                        // Force update of service worker on each page load
+                        registration.update();
+
+                        // Check for service worker updates
+                        setInterval(() => {
+                            registration.update();
+                            console.log('Checking for service worker updates...');
+                        }, 60 * 60 * 1000); // Check every hour
                     })
                     .catch(error => {
                         console.error('Service Worker registration failed:', error);
                     });
             });
         }
+
+        // Function to reload page when service worker is updated
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            console.log('Service worker controller changed, reloading page...');
+            window.location.reload();
+        });
     </script>
 </body>
 </html>

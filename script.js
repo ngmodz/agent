@@ -1,3 +1,13 @@
+// Listen for messages from the service worker
+if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.addEventListener('message', event => {
+        if (event.data && event.data.type === 'CACHE_UPDATED') {
+            console.log('Cache updated, reloading page for fresh content...');
+            window.location.reload();
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('searchInput');
     const searchButton = document.getElementById('searchButton');
@@ -25,8 +35,11 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Sort container found:', sortContainer !== null);
     console.log('Initial sort container display style:', sortContainer ? sortContainer.style.display : 'element not found');
 
-    // Fetch services data
-    fetch('services.json')
+    // Add cache-busting parameter to prevent browser caching
+    const cacheBuster = `?v=${Date.now()}`;
+
+    // Fetch services data with cache-busting
+    fetch(`services.json${cacheBuster}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -38,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
             dataLoaded = true;
             console.log('Services data loaded successfully. Total services:', servicesData.length);
             console.log('First service for verification:', servicesData[0]);
-            
+
             if (servicesData.length === 0) {
                 resultsContainer.innerHTML = '<p class="no-results">No services found in the data file. Please check services.json.</p>';
             } else {
@@ -73,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Helper function to ensure sort visibility based on results
     function updateSortContainerVisibility(hasResults) {
         if (!sortContainer) return;
-        
+
         if (hasResults) {
             // For mobile devices, add a smooth animation when showing the dropdown
             if (isMobile) {
@@ -81,17 +94,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 sortContainer.style.display = 'flex';
                 sortContainer.style.transform = 'translateY(-10px)';
                 sortContainer.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-                
+
                 // Force a reflow before applying the animation
                 sortContainer.offsetHeight;
-                
+
                 sortContainer.style.opacity = '1';
                 sortContainer.style.transform = 'translateY(0)';
             } else {
                 sortContainer.style.display = 'flex';
             }
             console.log('Making sort container visible:', sortContainer.style.display);
-            
+
             // Add click event listener to dropdown for mobile to improve touch interaction
             if (isMobile && sortDropdown) {
                 enhanceMobileDropdown();
@@ -101,31 +114,31 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Hiding sort container:', sortContainer.style.display);
         }
     }
-    
+
     // Function to enhance mobile dropdown behavior
     function enhanceMobileDropdown() {
         // Make sure we only add the event once
         if (sortDropdown.dataset.enhanced) return;
-        
+
         sortDropdown.dataset.enhanced = 'true';
-        
+
         // Add a subtle animation when opening the dropdown
         sortDropdown.addEventListener('focus', () => {
             sortDropdown.style.transform = 'scale(1.02)';
             sortDropdown.style.transition = 'transform 0.2s ease';
         });
-        
+
         sortDropdown.addEventListener('blur', () => {
             sortDropdown.style.transform = 'scale(1)';
         });
-        
+
         // Add vibration feedback on mobile if supported
         sortDropdown.addEventListener('change', () => {
             if ('vibrate' in navigator) {
                 navigator.vibrate(20); // Short vibration for feedback
             }
         });
-        
+
         console.log('Mobile dropdown enhancements applied');
     }
 
@@ -144,15 +157,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         console.log('Performing search for:', query);
-        
+
         // Parse query keywords
         const keywords = query.split(/\s+/).filter(k => k.length > 0);
         console.log('Search keywords:', keywords);
-        
+
         // Identify filter and platform keywords
         const filterWords = ['cheapest', 'fastest'];
         const platformKeywords = ['instagram', 'youtube', 'facebook', 'twitter', 'tiktok', 'telegram', 'discord', 'google', 'whatsapp'];
-        
+
         // Service type keywords we're looking for
         const serviceTypeKeywords = ['likes', 'followers', 'views', 'subscribers', 'comments', 'shares', 'members'];
 
@@ -173,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
             }
         }
-        
+
         // Identify service type from query
         for (const serviceType of serviceTypeKeywords) {
             if (keywords.some(k => k.includes(serviceType))) {
@@ -181,16 +194,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
             }
         }
-        
+
         console.log('Filters applied:', filters);
-        
+
         // Remove filter words and platform words from search keywords
-        let searchKeywords = keywords.filter(k => 
-            !filterWords.includes(k) && 
-            !platformKeywords.includes(k) && 
+        let searchKeywords = keywords.filter(k =>
+            !filterWords.includes(k) &&
+            !platformKeywords.includes(k) &&
             !serviceTypeKeywords.includes(k)
         );
-        
+
         // Special handling for typos and partial matches
         searchKeywords = searchKeywords.map(k => {
             // Handle common typos (e.g., "Instaram" -> "Instagram")
@@ -200,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (k.includes('face')) return 'facebook';
             return k;
         }).filter(k => k !== ''); // Remove any empty strings
-        
+
         console.log('Actual search keywords (after removing filters):', searchKeywords);
 
         // Filter services based on user query
@@ -209,33 +222,33 @@ document.addEventListener('DOMContentLoaded', () => {
             const serviceNameLower = (service.service_name || '').toLowerCase();
             const categoryLower = (service.category || '').toLowerCase();
             const descriptionLower = (service.description || '').toLowerCase();
-            
+
             // Platform filtering (e.g., Instagram, YouTube)
-            if (filters.platform && 
-                !serviceNameLower.includes(filters.platform) && 
+            if (filters.platform &&
+                !serviceNameLower.includes(filters.platform) &&
                 !categoryLower.includes(filters.platform)) {
                 return false;
             }
-            
+
             // Service type filtering (e.g., likes, followers)
-            if (filters.serviceType && 
-                !serviceNameLower.includes(filters.serviceType) && 
+            if (filters.serviceType &&
+                !serviceNameLower.includes(filters.serviceType) &&
                 !descriptionLower.includes(filters.serviceType)) {
                 return false;
             }
-            
+
             // Additional keyword filtering if any remain
             if (searchKeywords.length > 0) {
                 // Service should match all remaining keywords
                 const allFieldsText = serviceNameLower + ' ' + categoryLower + ' ' + descriptionLower;
                 return searchKeywords.every(keyword => allFieldsText.includes(keyword));
             }
-            
+
             return true;
         });
 
         console.log('Search results count:', results.length);
-        
+
         // Sort results based on filter
         if (filters.sortByPrice) {
             results.sort((a, b) => {
@@ -244,7 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const priceB = parseFloat((b.price_per_1000_inr || '').replace('₹', '')) || Infinity;
                 return priceA - priceB;
             });
-            
+
             // If "cheapest" was requested, only return the cheapest one
             if (filters.returnOnlyCheapest && results.length > 0) {
                 results = [results[0]];
@@ -258,36 +271,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 const timeB = parseAvgTime(b.avg_delivery_time);
                 return timeA - timeB;
             });
-            
+
             // If "fastest" was requested, only return the fastest one
             if (filters.returnOnlyFastest && results.length > 0) {
                 results = [results[0]];
             }
         }
-        
+
         // Reset the sort dropdown to default
         sortDropdown.value = 'default';
-        
+
         // Store current results
         currentResults = results;
-        
+
         // Update sort container visibility
         updateSortContainerVisibility(results.length > 0);
-        
+
         displayResults(results);
     }
-    
+
     // Helper function to parse average delivery time into a comparable number (e.g., minutes)
     function parseAvgTime(timeStr) {
         if (!timeStr || typeof timeStr !== 'string') return Infinity;
         timeStr = timeStr.toLowerCase();
         let totalMinutes = Infinity;
-        
+
         const matchMinutes = timeStr.match(/(\d+)\s*minutes?/);
         if (matchMinutes) {
             totalMinutes = parseInt(matchMinutes[1], 10);
         }
-        
+
         const matchHours = timeStr.match(/(\d+)\s*hours?/);
         if (matchHours) {
              // If only hours are mentioned and it's less than previous minute match, use hours.
@@ -295,8 +308,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (totalMinutes === Infinity || hoursInMinutes < totalMinutes) {
                  totalMinutes = hoursInMinutes;
             }
-        } 
-        
+        }
+
         if (timeStr.includes('instant')) {
             totalMinutes = 0; // Treat "instant" as the fastest
         }
@@ -312,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to sort results based on dropdown selection
     function sortResults(results) {
         const sortType = sortDropdown.value;
-        
+
         switch (sortType) {
             case 'price-asc':
                 results.sort((a, b) => {
@@ -321,7 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     return priceA - priceB;
                 });
                 break;
-                
+
             case 'price-desc':
                 results.sort((a, b) => {
                     const priceA = parseFloat((a.price_per_1000_inr || '').replace('₹', '')) || Infinity;
@@ -329,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     return priceB - priceA;
                 });
                 break;
-                
+
             case 'time-asc':
                 results.sort((a, b) => {
                     const timeA = parseAvgTime(a.avg_delivery_time);
@@ -337,7 +350,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     return timeA - timeB;
                 });
                 break;
-                
+
             // Default case - no sorting needed as we'll use the original order
             default:
                 break;
@@ -378,4 +391,4 @@ document.addEventListener('DOMContentLoaded', () => {
             resultsContainer.appendChild(serviceElement);
         });
     }
-}); 
+});
