@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
         category: '',
         serviceName: '',
         price: 0,
-        quantity: 0,
+        quantity: '',
         format: ''
     };
 
@@ -88,8 +88,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Store form data
         formData.category = categoryInput.value; // This now gets the value from our hidden input
         formData.serviceName = serviceNameInput.value;
-        formData.price = parseFloat(priceInput.value);
-        formData.quantity = parseInt(quantityInput.value);
+        formData.price = parseInt(priceInput.value) || 0; // Use parseInt to remove decimals
+        formData.quantity = quantityInput.value; // Store quantity as string
 
         // Hide main form and show format selection
         mainForm.style.display = 'none';
@@ -104,12 +104,12 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Please enter a service name');
             serviceNameInput.focus();
             isValid = false;
-        } else if (!priceInput.value || isNaN(parseFloat(priceInput.value)) || parseFloat(priceInput.value) < 0) {
-            alert('Please enter a valid price');
+        } else if (!priceInput.value.trim() || isNaN(parseInt(priceInput.value))) {
+            alert('Please enter a valid price (numbers only)');
             priceInput.focus();
             isValid = false;
-        } else if (!quantityInput.value || isNaN(parseInt(quantityInput.value)) || parseInt(quantityInput.value) < 1) {
-            alert('Please enter a valid quantity');
+        } else if (!quantityInput.value.trim()) {
+            alert('Please enter a quantity');
             quantityInput.focus();
             isValid = false;
         }
@@ -250,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Draw price
             ctx.font = `bold ${detailSize}px Arial`;
-            ctx.fillText(`Price: ₹${formData.price.toFixed(2)}`, width / 2, height * 0.65);
+            ctx.fillText(`Price: ₹${formData.price}`, width / 2, height * 0.65);
 
             // Draw quantity
             ctx.fillText(`Quantity: ${formData.quantity}`, width / 2, height * 0.72);
@@ -288,9 +288,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleDownload() {
         // Create a temporary link
         const link = document.createElement('a');
+        
+        // Create a safe filename with no spaces
+        const safeServiceName = formData.serviceName.substring(0, 10).replace(/\s+/g, '-');
 
         // Set download attributes
-        link.download = `${formData.category}-${formData.serviceName.substring(0, 10)}.png`;
+        link.download = `${formData.category}-${safeServiceName}.png`;
         link.href = imageCanvas.toDataURL('image/png');
 
         // Trigger download
@@ -331,7 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
             category: '',
             serviceName: '',
             price: 0,
-            quantity: 0,
+            quantity: '',
             format: ''
         };
 
