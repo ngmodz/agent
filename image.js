@@ -16,11 +16,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Format options
     const formatOptions = document.querySelectorAll('.format-option');
+    
+    // Check if we're on mobile
+    const isMobile = window.innerWidth <= 768;
 
     // Force initialization after everything is loaded to avoid flash
     window.addEventListener('load', () => {
         // Initialize social media buttons
         initSocialMediaButtons();
+        
+        // Mark body as loaded for proper positioning on mobile
+        if (isMobile) {
+            setTimeout(() => {
+                document.body.classList.add('page-loaded');
+            }, 300);
+        }
     });
 
     // SVG constants for image generation
@@ -96,7 +106,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Hide main form and show format selection
         mainForm.style.display = 'none';
+        
+        // Force reflow before showing format selection
+        window.getComputedStyle(formatSelection).opacity;
+        
         formatSelection.style.display = 'block';
+        
+        // Use transform for hardware acceleration on mobile
+        if (isMobile) {
+            formatSelection.style.transform = 'translate3d(0, 0, 0)';
+            // Force reflow
+            window.getComputedStyle(formatSelection).transform;
+        }
     }
 
     // Validate form inputs
@@ -137,9 +158,20 @@ document.addEventListener('DOMContentLoaded', () => {
         // Generate image
         generateImage();
 
-        // Show canvas container
+        // Hide format selection
         formatSelection.style.display = 'none';
+        
+        // Force reflow before showing canvas
+        window.getComputedStyle(canvasContainer).opacity;
+        
+        // Show canvas container with hardware acceleration
         canvasContainer.style.display = 'block';
+        
+        if (isMobile) {
+            canvasContainer.style.transform = 'translate3d(0, 0, 0)';
+            // Force reflow
+            window.getComputedStyle(canvasContainer).transform;
+        }
     }
 
     // Generate image based on form data and selected format
@@ -357,10 +389,21 @@ document.addEventListener('DOMContentLoaded', () => {
             option.classList.remove('selected');
         });
 
-        // Hide canvas container and format selection, show main form
+        // Hide canvas container and format selection
         canvasContainer.style.display = 'none';
         formatSelection.style.display = 'none';
+        
+        // Force reflow before showing main form
+        window.getComputedStyle(mainForm).opacity;
+        
+        // Show main form with hardware acceleration
         mainForm.style.display = 'block';
+        
+        if (isMobile) {
+            mainForm.style.transform = 'translate3d(0, 0, 0)';
+            // Force reflow
+            window.getComputedStyle(mainForm).transform;
+        }
     }
 
     // No longer need the createSVGElement function as we're using inline SVG

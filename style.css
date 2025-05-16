@@ -452,22 +452,57 @@ body {
         perspective: 1000px;
         will-change: opacity, transform;
         visibility: hidden;
+        
+        /* Special mobile transition handling */
+        transition: opacity 0.4s ease-out, transform 0.4s ease-out;
     }
     
     /* Faster overlay transitions */
     .page-overlay {
         transition: opacity 0.5s ease-out;
         background-color: #f4f6f8;
+        
+        /* Make overlay appearance more immediate */
+        transition-delay: 0s;
+        
+        /* Prevent flickering edges on some mobile browsers */
+        transform: translate3d(0, 0, 0);
+        width: 100vw;
+        height: 100vh;
+        left: 0;
+        top: 0;
     }
     
     /* Prevent content shifting which can cause flashing */
     body {
         overflow-y: scroll;
+        /* Prevent iOS bounce scroll effect during transitions */
+        overscroll-behavior-y: none;
+        -webkit-overflow-scrolling: touch;
+        /* Prevent content shifting */
+        width: 100%;
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+    }
+    
+    /* Reset fixed body after page load */
+    body.page-loaded {
+        position: relative;
+        height: auto;
     }
     
     /* Smoother transitions for all elements */
     * {
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+    }
+    
+    /* Prevent unwanted animations on page transition */
+    .page-transitioning * {
+        animation: none !important;
+        transition: none !important;
     }
 }

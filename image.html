@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, minimal-ui">
     <title>Image</title>
     
     <!-- Cache control meta tags -->
@@ -11,12 +11,15 @@
     <meta http-equiv="Expires" content="0">
     
     <!-- Preload critical resources -->
-    <link rel="preload" href="style.css?v=1.0.3" as="style">
-    <link rel="preload" href="page-transitions.js?v=1.0.3" as="script">
-    <link rel="preload" href="image.js?v=1.0.3" as="script">
+    <link rel="preload" href="style.css?v=1.0.4" as="style">
+    <link rel="preload" href="page-transitions.js?v=1.0.4" as="script">
+    <link rel="preload" href="image.js?v=1.0.4" as="script">
     <link rel="preload" href="index.html" as="document">
     
-    <link rel="stylesheet" href="style.css?v=1.0.3">
+    <!-- Preconnect to key resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    
+    <link rel="stylesheet" href="style.css?v=1.0.4">
     <!-- Web standard icon -->
     <link rel="icon" href="icons/viralgurux-192x192.png">
     <!-- PWA Meta Tags -->
@@ -386,14 +389,14 @@
         </footer>
     </div>
     <!-- Add page transitions script -->
-    <script src="page-transitions.js?v=1.0.3"></script>
+    <script src="page-transitions.js?v=1.0.4"></script>
     <!-- Add image generation script -->
-    <script src="image.js?v=1.0.3"></script>
+    <script src="image.js?v=1.0.4"></script>
     <!-- PWA Service Worker Registration -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js?v=1.0.3')
+                navigator.serviceWorker.register('./sw.js?v=1.0.4')
                     .then(registration => {
                         console.log('Service Worker registered with scope:', registration.scope);
                         
