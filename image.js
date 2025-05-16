@@ -123,16 +123,18 @@ document.addEventListener('DOMContentLoaded', () => {
         imageCanvas.width = width;
         imageCanvas.height = height;
 
-        // Draw purple borders at top and bottom
-        ctx.fillStyle = '#B598E4';
-        // Top border - full width, 15px height
-        ctx.fillRect(0, 0, width, 15);
-        // Bottom border - full width, 15px height
-        ctx.fillRect(0, height - 15, width, 15);
-
-        // Draw white background for the content area
+        // Draw background as white first
         ctx.fillStyle = '#FFFFFF';
-        ctx.fillRect(0, 15, width, height - 30);
+        ctx.fillRect(0, 0, width, height);
+
+        // Calculate border height (approximately 2% of total height)
+        const borderHeight = Math.floor(height * 0.02);
+
+        // Draw purple border only at the top that extends to the edges
+        ctx.fillStyle = '#B598E4';
+        // Top border - full width, extends from top edge
+        ctx.fillRect(0, 0, width, borderHeight);
+        // Bottom border removed as requested
 
         // Draw black text content
         drawBlackTextContent(ctx, width, height);
