@@ -435,6 +435,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Draw watermark
             ctx.font = `${detailSize * 0.7}px "Times New Roman"`;
             ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.textAlign = 'center'; // Ensure text alignment is set to center
             ctx.fillText('Viralgurux', width / 2, height * 0.95);
         }
     }
