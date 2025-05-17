@@ -11,7 +11,7 @@
     <meta http-equiv="Expires" content="0">
     
     <!-- Preload critical resources -->
-    <link rel="preload" href="style.css?v=1.0.4" as="style">
+    <link rel="preload" href="style.css?v=1.0.5" as="style">
     <link rel="preload" href="page-transitions.js?v=1.0.4" as="script">
     <link rel="preload" href="image.js?v=1.0.4" as="script">
     <link rel="preload" href="index.html" as="document">
@@ -19,7 +19,7 @@
     <!-- Preconnect to key resources -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     
-    <link rel="stylesheet" href="style.css?v=1.0.4">
+    <link rel="stylesheet" href="style.css?v=1.0.5">
     <!-- Web standard icon -->
     <link rel="icon" href="icons/viralgurux-192x192.png">
     <!-- PWA Meta Tags -->
@@ -479,7 +479,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js?v=1.0.4')
+                navigator.serviceWorker.register('./sw.js?v=1.0.5')
                     .then(registration => {
                         console.log('Service Worker registered with scope:', registration.scope);
                         

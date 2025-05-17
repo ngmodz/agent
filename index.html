@@ -11,7 +11,7 @@
     <meta http-equiv="Expires" content="0">
 
     <!-- Preload critical resources -->
-    <link rel="preload" href="style.css?v=1.0.4" as="style">
+    <link rel="preload" href="style.css?v=1.0.5" as="style">
     <link rel="preload" href="page-transitions.js?v=1.0.4" as="script">
     <link rel="preload" href="script.js?v=1.0.4" as="script">
     <link rel="preload" href="image.html" as="document">
@@ -20,7 +20,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 
     <!-- Add version parameter to CSS to prevent caching -->
-    <link rel="stylesheet" href="style.css?v=1.0.4">
+    <link rel="stylesheet" href="style.css?v=1.0.5">
 
     <!-- Web standard icon -->
     <link rel="icon" href="icons/viralgurux-192x192.png">
@@ -91,7 +91,7 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 // Add cache-busting parameter to service worker registration
-                navigator.serviceWorker.register('./sw.js?v=1.0.4')
+                navigator.serviceWorker.register('./sw.js?v=1.0.5')
                     .then(registration => {
                         console.log('Service Worker registered with scope:', registration.scope);
 

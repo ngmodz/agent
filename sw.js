@@ -1,7 +1,7 @@
 // Service Worker for Agent PWA
 
 // Increment cache version to invalidate previous caches
-const CACHE_NAME = 'agent-cache-v6';
+const CACHE_NAME = 'agent-cache-v7';
 
 // Files that should be cached but can be served from network first
 const NETWORK_FIRST_ASSETS = [
