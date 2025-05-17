@@ -7,13 +7,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const downloadBtn = document.getElementById('downloadBtn');
     const startOverBtn = document.getElementById('startOverBtn');
     const imageCanvas = document.getElementById('imageCanvas');
+    const servicesList = document.getElementById('servicesList');
+    const addServiceBtn = document.getElementById('addServiceBtn');
 
     // Form input elements
     const categoryInput = document.getElementById('category');
     const serviceNameInput = document.getElementById('serviceName');
-    const priceInput = document.getElementById('price');
-    const quantityInput = document.getElementById('quantity');
-
+    
+    // Service counter for unique IDs
+    let serviceCounter = 1;
+    
     // Format options
     const formatOptions = document.querySelectorAll('.format-option');
     
@@ -24,6 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('load', () => {
         // Initialize social media buttons
         initSocialMediaButtons();
+        
+        // Initialize add service button
+        initAddServiceButton();
         
         // Mark body as loaded for proper positioning on mobile
         if (isMobile) {
@@ -76,8 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let formData = {
         category: '',
         serviceName: '',
-        price: 0,
-        quantity: '',
+        services: [],
         format: ''
     };
 
@@ -89,6 +94,77 @@ document.addEventListener('DOMContentLoaded', () => {
     downloadBtn.addEventListener('click', handleDownload);
     startOverBtn.addEventListener('click', handleStartOver);
 
+    // Initialize add service button
+    function initAddServiceButton() {
+        addServiceBtn.addEventListener('click', addNewService);
+        
+        // Initialize remove buttons for existing services
+        document.querySelectorAll('.remove-service').forEach(btn => {
+            btn.addEventListener('click', removeService);
+        });
+    }
+    
+    // Add a new service input row
+    function addNewService() {
+        const serviceItem = document.createElement('div');
+        serviceItem.className = 'service-item';
+        
+        serviceItem.innerHTML = `
+            <button type="button" class="remove-service">&times;</button>
+            <div class="form-group">
+                <label for="service${serviceCounter}">Service Details</label>
+                <input type="text" id="service${serviceCounter}" class="form-control service-detail" placeholder="e.g. 500 followers">
+            </div>
+            <div class="form-group">
+                <label for="price${serviceCounter}">Price</label>
+                <div class="price-input-container">
+                    <input type="text" id="price${serviceCounter}" class="form-control price-input" placeholder="Enter price" min="0">
+                    <span class="price-currency">₹</span>
+                </div>
+            </div>
+        `;
+        
+        servicesList.appendChild(serviceItem);
+        
+        // Add event listener to the new remove button
+        const removeBtn = serviceItem.querySelector('.remove-service');
+        removeBtn.addEventListener('click', removeService);
+        
+        // Check if this is the second service being added
+        if (servicesList.querySelectorAll('.service-item').length === 2) {
+            // Add remove button to the first service item
+            const firstServiceItem = servicesList.querySelector('.service-item');
+            if (!firstServiceItem.querySelector('.remove-service')) {
+                const firstRemoveBtn = document.createElement('button');
+                firstRemoveBtn.type = 'button';
+                firstRemoveBtn.className = 'remove-service';
+                firstRemoveBtn.innerHTML = '&times;';
+                firstRemoveBtn.addEventListener('click', removeService);
+                firstServiceItem.appendChild(firstRemoveBtn);
+                firstServiceItem.style.paddingRight = '40px';
+            }
+        }
+        
+        serviceCounter++;
+    }
+    
+    // Remove a service input row
+    function removeService(e) {
+        const serviceItem = e.target.closest('.service-item');
+        servicesList.removeChild(serviceItem);
+        
+        // Check if there's only one service left
+        if (servicesList.querySelectorAll('.service-item').length === 1) {
+            // Remove the remove button from the last service item
+            const lastServiceItem = servicesList.querySelector('.service-item');
+            const removeBtn = lastServiceItem.querySelector('.remove-service');
+            if (removeBtn) {
+                removeBtn.remove();
+                lastServiceItem.style.paddingRight = '10px';
+            }
+        }
+    }
+
     // Handle main form submission
     function handleFormSubmit(e) {
         e.preventDefault();
@@ -99,10 +175,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Store form data
-        formData.category = categoryInput.value; // This now gets the value from our hidden input
+        formData.category = categoryInput.value;
         formData.serviceName = serviceNameInput.value;
-        formData.price = parseInt(priceInput.value) || 0; // Use parseInt to remove decimals
-        formData.quantity = quantityInput.value; // Store quantity as string
+        
+        // Get all services
+        formData.services = [];
+        const serviceItems = document.querySelectorAll('.service-item');
+        
+        serviceItems.forEach((item, index) => {
+            const serviceDetail = item.querySelector('.service-detail').value;
+            const price = parseInt(item.querySelector('.price-input').value) || 0;
+            
+            formData.services.push({
+                detail: serviceDetail,
+                price: price
+            });
+        });
 
         // Hide main form and show format selection
         mainForm.style.display = 'none';
@@ -128,14 +216,30 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Please enter a service name');
             serviceNameInput.focus();
             isValid = false;
-        } else if (!priceInput.value.trim() || isNaN(parseInt(priceInput.value))) {
-            alert('Please enter a valid price (numbers only)');
-            priceInput.focus();
-            isValid = false;
-        } else if (!quantityInput.value.trim()) {
-            alert('Please enter a quantity');
-            quantityInput.focus();
-            isValid = false;
+            return isValid;
+        }
+        
+        // Validate all service items
+        const serviceItems = document.querySelectorAll('.service-item');
+        
+        for (let i = 0; i < serviceItems.length; i++) {
+            const item = serviceItems[i];
+            const serviceDetail = item.querySelector('.service-detail');
+            const priceInput = item.querySelector('.price-input');
+            
+            if (!serviceDetail.value.trim()) {
+                alert('Please enter service details');
+                serviceDetail.focus();
+                isValid = false;
+                return isValid;
+            }
+            
+            if (!priceInput.value.trim() || isNaN(parseInt(priceInput.value))) {
+                alert('Please enter a valid price (numbers only)');
+                priceInput.focus();
+                isValid = false;
+                return isValid;
+            }
         }
 
         return isValid;
@@ -224,10 +328,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Set black text color
         ctx.fillStyle = '#000000';
 
-        // Calculate font sizes based on canvas dimensions (increased for better visibility)
+        // Calculate font sizes based on canvas dimensions
         const titleSize = Math.floor(width * 0.06);
         const subtitleSize = Math.floor(width * 0.045);
         const detailSize = Math.floor(width * 0.04);
+        const serviceDetailSize = Math.floor(width * 0.04); // Increased from 0.035
 
         // Set text alignment
         ctx.textAlign = 'center';
@@ -235,7 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Draw logo based on category
         const logoSize = Math.floor(width * 0.15); // Small size for the logo (15% of width)
         const logoX = width / 2 - logoSize / 2;
-        const logoY = height * 0.15;
+        const logoY = height * 0.05; // Position logo higher up
 
         function drawLogo(logoSVG) {
             // Create a temporary image to draw the SVG
@@ -262,20 +367,20 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             // Draw the category name as text for other categories
             ctx.font = `bold ${titleSize}px Arial`;
-            ctx.fillText(formData.category, width / 2, height * 0.25); // Y position for text if no logo
+            ctx.fillText(formData.category, width / 2, height * 0.1); // Y position for text if no logo
             drawRemainingContent(); // Draw other text immediately
         }
 
         function drawRemainingContent() {
-            // Draw service name
-            ctx.font = `${subtitleSize}px Arial`;
+            // Draw service name as "Followers" or whatever the service name is
+            ctx.font = `bold ${subtitleSize}px Arial`;
 
             // Handle long service names by wrapping text
             const maxLineWidth = width * 0.8;
             const serviceNameLines = wrapText(ctx, formData.serviceName, maxLineWidth);
 
             // Draw each line of the wrapped service name
-            let y = height * 0.4;
+            let y = height * 0.28; // Increased vertical position for service name
             const lineHeight = subtitleSize * 1.2;
 
             serviceNameLines.forEach(line => {
@@ -283,12 +388,67 @@ document.addEventListener('DOMContentLoaded', () => {
                 y += lineHeight;
             });
 
-            // Draw price
-            ctx.font = `bold ${detailSize}px Arial`;
-            ctx.fillText(`Price: ₹${formData.price}`, width / 2, height * 0.65);
-
-            // Draw quantity
-            ctx.fillText(`Quantity: ${formData.quantity}`, width / 2, height * 0.72);
+            // Add horizontal separator line
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(width * 0.2, y + lineHeight * 0.5);
+            ctx.lineTo(width * 0.8, y + lineHeight * 0.5);
+            ctx.stroke();
+            
+            // Calculate starting Y position for services
+            y = y + lineHeight * 1.5; // Start services after the separator line
+            
+            // Calculate line height for service details
+            const serviceLineHeight = serviceDetailSize * 2;
+            
+            // Draw each service detail
+            formData.services.forEach((service, index) => {
+                // Create the price text with the currency symbol
+                const priceText = `₹${service.price}`;
+                
+                // Set up fonts for measurement
+                const serviceFont = `${serviceDetailSize * 1.2}px Arial`;
+                const priceFont = `bold ${serviceDetailSize * 1.2}px Arial`;
+                
+                // Calculate the center point
+                const centerX = width / 2;
+                
+                // Measure text widths
+                ctx.font = serviceFont;
+                const serviceWidth = ctx.measureText(service.detail).width;
+                
+                ctx.font = priceFont;
+                const priceWidth = ctx.measureText(priceText).width;
+                
+                // Calculate total width and starting positions
+                const totalWidth = serviceWidth + priceWidth + 20; // 20px spacing between service and price
+                const startX = centerX - (totalWidth / 2);
+                
+                // Draw service detail left-aligned from the start position
+                ctx.font = serviceFont;
+                ctx.fillStyle = '#000000';
+                ctx.textAlign = 'left';
+                ctx.fillText(service.detail, startX, y);
+                
+                // Draw price right after the service name
+                ctx.font = priceFont;
+                ctx.fillStyle = '#007bff'; // Blue color for price
+                ctx.fillText(priceText, startX + serviceWidth + 20, y); // 20px spacing
+                
+                // Move to next service with spacing
+                y += serviceLineHeight * 1.2; // Spacing between services
+                
+                // Add a separator line between services (except after the last one)
+                if (index < formData.services.length - 1) {
+                    ctx.strokeStyle = 'rgba(0, 0, 0, 0.05)';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(width * 0.3, y - serviceLineHeight * 0.5);
+                    ctx.lineTo(width * 0.7, y - serviceLineHeight * 0.5);
+                    ctx.stroke();
+                }
+            });
 
             // Draw watermark
             ctx.font = `${detailSize * 0.7}px Arial`;
@@ -368,15 +528,32 @@ document.addEventListener('DOMContentLoaded', () => {
         formData = {
             category: '',
             serviceName: '',
-            price: 0,
-            quantity: '',
+            services: [],
             format: ''
         };
 
         // Reset form input values
         serviceNameInput.value = '';
-        priceInput.value = '';
-        quantityInput.value = '';
+        
+        // Reset services list to just one service
+        servicesList.innerHTML = `
+            <div class="service-item">
+                <div class="form-group">
+                    <label for="service0">Service Details</label>
+                    <input type="text" id="service0" class="form-control service-detail" placeholder="e.g. 500 followers">
+                </div>
+                <div class="form-group">
+                    <label for="price0">Price</label>
+                    <div class="price-input-container">
+                        <input type="text" id="price0" class="form-control price-input" placeholder="Enter price" min="0">
+                        <span class="price-currency">₹</span>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Reset service counter
+        serviceCounter = 1;
 
         // Reset social media buttons to default (Instagram)
         const socialButtons = document.querySelectorAll('.social-btn');

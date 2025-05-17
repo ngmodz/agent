@@ -343,15 +343,98 @@
                     <input type="text" id="serviceName" class="form-control" placeholder="Enter service name">
                 </div>
 
-                <div class="form-group">
-                    <label for="price">Price</label>
-                    <input type="text" id="price" class="form-control" placeholder="Enter price" min="0">
+                <div id="servicesList">
+                    <!-- Services will be added here dynamically -->
+                    <div class="service-item">
+                        <div class="form-group">
+                            <label for="service0">Service Details</label>
+                            <input type="text" id="service0" class="form-control service-detail" placeholder="e.g. 500 followers">
+                        </div>
+                        <div class="form-group">
+                            <label for="price0">Price</label>
+                            <div class="price-input-container">
+                                <input type="text" id="price0" class="form-control price-input" placeholder="Enter price" min="0">
+                                <span class="price-currency">₹</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="quantity">Quantity</label>
-                    <input type="text" id="quantity" class="form-control" placeholder="Enter quantity">
+                    <button type="button" id="addServiceBtn" class="btn btn-secondary">+ Add Another Service</button>
                 </div>
+
+                <style>
+                    /* Service item styling */
+                    .service-item {
+                        padding: 15px;
+                        margin-bottom: 15px;
+                        border: 1px solid #eee;
+                        border-radius: 8px;
+                        position: relative;
+                        background-color: #f9f9f9;
+                        transition: all 0.2s ease;
+                    }
+                    
+                    .service-item:hover {
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                    }
+                    
+                    .service-item:not(:first-child) {
+                        padding-right: 40px;
+                    }
+                    
+                    .remove-service {
+                        position: absolute;
+                        right: 10px;
+                        top: 10px;
+                        width: 24px;
+                        height: 24px;
+                        border-radius: 50%;
+                        background-color: #f44336;
+                        color: white;
+                        border: none;
+                        font-size: 16px;
+                        line-height: 1;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        transition: all 0.2s ease;
+                    }
+                    
+                    .remove-service:hover {
+                        background-color: #d32f2f;
+                        transform: scale(1.1);
+                    }
+                    
+                    .price-input-container {
+                        position: relative;
+                    }
+                    
+                    .price-currency {
+                        position: absolute;
+                        left: 10px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        color: #666;
+                    }
+                    
+                    .price-input {
+                        padding-left: 25px;
+                    }
+                    
+                    #addServiceBtn {
+                        background-color: #4CAF50;
+                        border-color: #4CAF50;
+                        transition: all 0.2s ease;
+                    }
+                    
+                    #addServiceBtn:hover {
+                        background-color: #388E3C;
+                        border-color: #388E3C;
+                    }
+                </style>
 
                 <button id="submitForm" class="btn btn-primary btn-block">Continue</button>
             </div>
