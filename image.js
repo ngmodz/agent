@@ -330,7 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Calculate font sizes based on canvas dimensions
         const titleSize = Math.floor(width * 0.06);
-        const subtitleSize = Math.floor(width * 0.045);
+        const subtitleSize = Math.floor(width * 0.055); // Increased from 0.045
         const detailSize = Math.floor(width * 0.04);
         const serviceDetailSize = Math.floor(width * 0.04); // Increased from 0.035
 
@@ -366,14 +366,14 @@ document.addEventListener('DOMContentLoaded', () => {
             drawLogo(youtubeLogoSVG);
         } else {
             // Draw the category name as text for other categories
-            ctx.font = `bold ${titleSize}px Arial`;
+            ctx.font = `bold ${titleSize}px "Times New Roman"`;
             ctx.fillText(formData.category, width / 2, height * 0.1); // Y position for text if no logo
             drawRemainingContent(); // Draw other text immediately
         }
 
         function drawRemainingContent() {
             // Draw service name as "Followers" or whatever the service name is
-            ctx.font = `bold ${subtitleSize}px Arial`;
+            ctx.font = `bold ${subtitleSize}px "Times New Roman"`;
 
             // Handle long service names by wrapping text
             const maxLineWidth = width * 0.8;
@@ -400,8 +400,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const priceText = `₹${service.price}`;
                 
                 // Set up fonts for measurement
-                const serviceFont = `${serviceDetailSize * 1.2}px Arial`;
-                const priceFont = `bold ${serviceDetailSize * 1.2}px Arial`;
+                const serviceFont = `${serviceDetailSize * 1.2}px "Times New Roman"`;
+                const priceFont = `bold ${serviceDetailSize * 1.2}px "Times New Roman"`;
                 
                 // Calculate the center point
                 const centerX = width / 2;
@@ -433,7 +433,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // Draw watermark
-            ctx.font = `${detailSize * 0.7}px Arial`;
+            ctx.font = `${detailSize * 0.7}px "Times New Roman"`;
             ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
             ctx.fillText('Viralgurux', width / 2, height * 0.95);
         }
