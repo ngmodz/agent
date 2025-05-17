@@ -388,16 +388,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 y += lineHeight;
             });
 
-            // Add horizontal separator line
-            ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(width * 0.2, y + lineHeight * 0.5);
-            ctx.lineTo(width * 0.8, y + lineHeight * 0.5);
-            ctx.stroke();
-            
-            // Calculate starting Y position for services
-            y = y + lineHeight * 1.5; // Start services after the separator line
+            // Add some spacing after the service name
+            y += lineHeight * 1.0;
             
             // Calculate line height for service details
             const serviceLineHeight = serviceDetailSize * 2;
@@ -438,16 +430,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Move to next service with spacing
                 y += serviceLineHeight * 1.2; // Spacing between services
-                
-                // Add a separator line between services (except after the last one)
-                if (index < formData.services.length - 1) {
-                    ctx.strokeStyle = 'rgba(0, 0, 0, 0.05)';
-                    ctx.lineWidth = 1;
-                    ctx.beginPath();
-                    ctx.moveTo(width * 0.3, y - serviceLineHeight * 0.5);
-                    ctx.lineTo(width * 0.7, y - serviceLineHeight * 0.5);
-                    ctx.stroke();
-                }
             });
 
             // Draw watermark
