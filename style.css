@@ -349,7 +349,7 @@ footer {
 /* PWA mobile specific styles */
 @media (display-mode: standalone) and (max-width: 768px) {
     .container {
-        margin-top: 50px !important;
+        margin-top: 40px !important;
     }
 }
 
