@@ -381,12 +381,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             serviceElement.innerHTML = `
                 <h3>${displayValue(service.service_name)} (ID: ${displayValue(service.service_id)})</h3>
-                <p><strong>Category:</strong> ${displayValue(service.category)}</p>
-                <p><strong>Price per 1000:</strong> ${service.price_per_1000_inr ? `${displayValue(service.price_per_1000_inr)}` : 'N/A'}</p>
-                <p><strong>Min Order:</strong> ${displayValue(service.min_order)}</p>
-                <p><strong>Max Order:</strong> ${displayValue(service.max_order)}</p>
-                <p><strong>Avg. Delivery Time:</strong> ${displayValue(service.avg_delivery_time, service["avg._delivery_time"])}</p> <!-- Handle slight key variation -->
-                <p><strong>Description:</strong> ${displayValue(service.description)}</p>
+                <p style="margin: 3px 0;"><strong>Category:</strong> ${displayValue(service.category)}</p>
+                <p style="margin: 3px 0;"><strong>Price per 1000:</strong> ${service.price_per_1000_inr ? `${displayValue(service.price_per_1000_inr)}` : 'N/A'}</p>
+                <p style="margin: 3px 0;"><strong>Min Order:</strong> ${displayValue(service.min_order)}</p>
+                <p style="margin: 3px 0;"><strong>Max Order:</strong> ${displayValue(service.max_order)}</p>
+                <p style="margin: 3px 0;"><strong>Avg. Delivery Time:</strong> ${displayValue(service.avg_delivery_time, service["avg._delivery_time"])}</p> <!-- Handle slight key variation -->
+                <p style="margin: 3px 0;"><strong>Description:</strong> ${displayValue(service.description)}</p>
             `;
             resultsContainer.appendChild(serviceElement);
         });

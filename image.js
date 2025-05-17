@@ -306,6 +306,12 @@ document.addEventListener('DOMContentLoaded', () => {
         imageCanvas.width = width;
         imageCanvas.height = height;
 
+        // Calculate font sizes based on canvas dimensions
+        const titleSize = Math.floor(width * 0.06);
+        const subtitleSize = Math.floor(width * 0.055);
+        const detailSize = Math.floor(width * 0.04);
+        const serviceDetailSize = Math.floor(width * 0.04);
+
         // Draw background as white first
         ctx.fillStyle = '#FFFFFF';
         ctx.fillRect(0, 0, width, height);
@@ -315,28 +321,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Draw purple border only at the top that extends to the edges
         ctx.fillStyle = '#B598E4';
-        // Top border - full width, extends from top edge
         ctx.fillRect(0, 0, width, borderHeight);
-        // Bottom border removed as requested
 
-        // Draw black text content
-        drawBlackTextContent(ctx, width, height);
+        // Draw logo and content
+        drawLogoAndContent(ctx, width, height, titleSize, subtitleSize, detailSize, serviceDetailSize);
     }
 
-    // Draw content with black text on white background
-    function drawBlackTextContent(ctx, width, height) {
-        // Set black text color
-        ctx.fillStyle = '#000000';
-
-        // Calculate font sizes based on canvas dimensions
-        const titleSize = Math.floor(width * 0.06);
-        const subtitleSize = Math.floor(width * 0.055); // Increased from 0.045
-        const detailSize = Math.floor(width * 0.04);
-        const serviceDetailSize = Math.floor(width * 0.04); // Increased from 0.035
-
+    // Draw logo and content
+    function drawLogoAndContent(ctx, width, height, titleSize, subtitleSize, detailSize, serviceDetailSize) {
         // Set text alignment
         ctx.textAlign = 'center';
-
+        
         // Draw logo based on category
         const logoSize = Math.floor(width * 0.15); // Small size for the logo (15% of width)
         const logoX = width / 2 - logoSize / 2;
@@ -351,39 +346,24 @@ document.addEventListener('DOMContentLoaded', () => {
             logoY = height * 0.1; // Default position for other formats
         }
 
+        // Function to draw the logo
         function drawLogo(logoSVG) {
-            // Create a temporary image to draw the SVG
             const img = new Image();
             img.onload = function() {
                 ctx.drawImage(img, logoX, logoY, logoSize, logoSize);
-
-                // Continue drawing the rest of the content
-                drawRemainingContent();
+                drawContent();
             };
-
-            // Convert SVG to data URL
             const svgBlob = new Blob([logoSVG], {type: 'image/svg+xml'});
             const url = URL.createObjectURL(svgBlob);
             img.src = url;
         }
 
-        if (formData.category === 'Instagram') {
-            drawLogo(instagramLogoSVG);
-        } else if (formData.category === 'Facebook') {
-            drawLogo(facebookLogoSVG);
-        } else if (formData.category === 'YouTube') {
-            drawLogo(youtubeLogoSVG);
-        } else {
-            // Draw the category name as text for other categories
-            ctx.font = `bold ${titleSize}px "Times New Roman"`;
-            ctx.fillText(formData.category, width / 2, logoY + logoSize/2); // Y position for text if no logo
-            drawRemainingContent(); // Draw other text immediately
-        }
-
-        function drawRemainingContent() {
-            // Draw service name as "Followers" or whatever the service name is
+        // Function to draw the content (service name, details, prices, and watermark)
+        function drawContent() {
+            // Draw service name
             ctx.font = `bold ${subtitleSize}px "Times New Roman"`;
-
+            ctx.fillStyle = '#000000';
+            
             // Handle long service names by wrapping text
             const maxLineWidth = width * 0.8;
             const serviceNameLines = wrapText(ctx, formData.serviceName, maxLineWidth);
@@ -411,7 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
             y += lineHeight * 1.0;
             
             // Calculate line height for service details
-            const serviceLineHeight = serviceDetailSize * 2;
+            const serviceLineHeight = serviceDetailSize * 1.5;
             
             // Adjust spacing for service details based on format
             if (formData.format === 'square') {
@@ -454,7 +434,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ctx.fillText(priceText, startX + serviceWidth + 20, y); // 20px spacing
                 
                 // Move to next service with spacing
-                y += serviceLineHeight * 1.2; // Spacing between services
+                y += serviceLineHeight * 0.8; // Reduced spacing between services
             });
 
             // Draw watermark
@@ -471,6 +451,21 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             ctx.fillText('Viralgurux', width / 2, watermarkY);
+        }
+
+        // Choose which logo to draw based on category
+        if (formData.category === 'Instagram') {
+            drawLogo(instagramLogoSVG);
+        } else if (formData.category === 'Facebook') {
+            drawLogo(facebookLogoSVG);
+        } else if (formData.category === 'YouTube') {
+            drawLogo(youtubeLogoSVG);
+        } else {
+            // Draw the category name as text for other categories
+            ctx.font = `bold ${titleSize}px "Times New Roman"`;
+            ctx.fillStyle = '#000000';
+            ctx.fillText(formData.category, width / 2, logoY + logoSize/2); // Y position for text if no logo
+            drawContent(); // Draw other text immediately
         }
     }
 
