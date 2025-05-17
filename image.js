@@ -9,6 +9,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageCanvas = document.getElementById('imageCanvas');
     const servicesList = document.getElementById('servicesList');
     const addServiceBtn = document.getElementById('addServiceBtn');
+    // Add preview canvas element
+    const previewContainer = document.createElement('div');
+    previewContainer.id = 'previewContainer';
+    previewContainer.style.cssText = 'margin-top: 20px; text-align: center; display: none;';
+    
+    const previewTitle = document.createElement('h4');
+    previewTitle.textContent = 'Live Preview';
+    previewTitle.style.marginBottom = '10px';
+    
+    const previewCanvas = document.createElement('canvas');
+    previewCanvas.id = 'previewCanvas';
+    previewCanvas.style.cssText = 'max-width: 100%; border: 1px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,0.1);';
+    
+    previewContainer.appendChild(previewTitle);
+    previewContainer.appendChild(previewCanvas);
+    mainForm.appendChild(previewContainer);
 
     // Form input elements
     const categoryInput = document.getElementById('category');
@@ -37,6 +53,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.body.classList.add('page-loaded');
             }, 300);
         }
+        
+        // Show preview container
+        previewContainer.style.display = 'block';
+        
+        // Initialize preview
+        updateLivePreview();
     });
 
     // SVG constants for image generation
@@ -80,10 +102,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Form data storage
     let formData = {
-        category: '',
+        category: 'Instagram', // Default value
         serviceName: '',
         services: [],
-        format: ''
+        format: 'square' // Default to square for preview
     };
 
     // Event listeners
@@ -93,14 +115,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     downloadBtn.addEventListener('click', handleDownload);
     startOverBtn.addEventListener('click', handleStartOver);
+    
+    // Add event listeners for live preview updates
+    serviceNameInput.addEventListener('input', updateLivePreview);
+    categoryInput.addEventListener('change', updateLivePreview);
 
     // Initialize add service button
     function initAddServiceButton() {
-        addServiceBtn.addEventListener('click', addNewService);
+        addServiceBtn.addEventListener('click', () => {
+            addNewService();
+            updateLivePreview();
+        });
         
         // Initialize remove buttons for existing services
         document.querySelectorAll('.remove-service').forEach(btn => {
-            btn.addEventListener('click', removeService);
+            btn.addEventListener('click', (e) => {
+                removeService(e);
+                updateLivePreview();
+            });
         });
     }
     
@@ -128,7 +160,17 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Add event listener to the new remove button
         const removeBtn = serviceItem.querySelector('.remove-service');
-        removeBtn.addEventListener('click', removeService);
+        removeBtn.addEventListener('click', (e) => {
+            removeService(e);
+            updateLivePreview();
+        });
+        
+        // Add event listeners for inputs to update preview
+        const serviceDetailInput = serviceItem.querySelector('.service-detail');
+        const priceInput = serviceItem.querySelector('.price-input');
+        
+        serviceDetailInput.addEventListener('input', updateLivePreview);
+        priceInput.addEventListener('input', updateLivePreview);
         
         // Check if this is the second service being added
         if (servicesList.querySelectorAll('.service-item').length === 2) {
@@ -139,7 +181,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 firstRemoveBtn.type = 'button';
                 firstRemoveBtn.className = 'remove-service';
                 firstRemoveBtn.innerHTML = '&times;';
-                firstRemoveBtn.addEventListener('click', removeService);
+                firstRemoveBtn.addEventListener('click', (e) => {
+                    removeService(e);
+                    updateLivePreview();
+                });
                 firstServiceItem.appendChild(firstRemoveBtn);
                 firstServiceItem.style.paddingRight = '40px';
             }
@@ -162,6 +207,186 @@ document.addEventListener('DOMContentLoaded', () => {
                 removeBtn.remove();
                 lastServiceItem.style.paddingRight = '10px';
             }
+        }
+    }
+
+    // Update live preview function
+    function updateLivePreview() {
+        // Get current form data
+        const currentCategory = categoryInput.value || 'Instagram';
+        const currentServiceName = serviceNameInput.value || 'Service Name';
+        
+        // Get all services
+        const currentServices = [];
+        const serviceItems = document.querySelectorAll('.service-item');
+        
+        serviceItems.forEach((item) => {
+            const serviceDetail = item.querySelector('.service-detail').value || 'Service Detail';
+            const price = parseInt(item.querySelector('.price-input').value) || 0;
+            
+            currentServices.push({
+                detail: serviceDetail,
+                price: price
+            });
+        });
+        
+        // Update temporary formData for preview
+        const previewData = {
+            category: currentCategory,
+            serviceName: currentServiceName,
+            services: currentServices,
+            format: 'square' // Always use square for preview
+        };
+        
+        // Generate preview image
+        generatePreviewImage(previewData);
+    }
+    
+    // Generate preview image
+    function generatePreviewImage(previewData) {
+        const previewCanvas = document.getElementById('previewCanvas');
+        const ctx = previewCanvas.getContext('2d');
+        
+        // Set canvas dimensions for preview (smaller than actual)
+        const width = 300;
+        const height = 300;
+        
+        // Set canvas dimensions
+        previewCanvas.width = width;
+        previewCanvas.height = height;
+        
+        // Calculate font sizes based on canvas dimensions
+        const titleSize = Math.floor(width * 0.06);
+        const subtitleSize = Math.floor(width * 0.055);
+        const detailSize = Math.floor(width * 0.04);
+        const serviceDetailSize = Math.floor(width * 0.04);
+        
+        // Draw background as white first
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, width, height);
+        
+        // Calculate border height (approximately 2% of total height)
+        const borderHeight = Math.floor(height * 0.02);
+        
+        // Draw purple border only at the top that extends to the edges
+        ctx.fillStyle = '#B598E4';
+        ctx.fillRect(0, 0, width, borderHeight);
+        
+        // Draw logo and content with preview data
+        drawPreviewLogoAndContent(ctx, width, height, titleSize, subtitleSize, detailSize, serviceDetailSize, previewData);
+    }
+    
+    // Draw preview logo and content
+    function drawPreviewLogoAndContent(ctx, width, height, titleSize, subtitleSize, detailSize, serviceDetailSize, previewData) {
+        // Set text alignment
+        ctx.textAlign = 'center';
+        
+        // Draw logo based on category
+        const logoSize = Math.floor(width * 0.15); // Small size for the logo (15% of width)
+        const logoX = width / 2 - logoSize / 2;
+        const logoY = height * 0.08; // Position logo higher in square format
+        
+        // Function to draw the logo
+        function drawLogo(logoSVG) {
+            const img = new Image();
+            img.onload = function() {
+                ctx.drawImage(img, logoX, logoY, logoSize, logoSize);
+                drawContent();
+            };
+            const svgBlob = new Blob([logoSVG], {type: 'image/svg+xml'});
+            const url = URL.createObjectURL(svgBlob);
+            img.src = url;
+        }
+        
+        // Function to draw the content (service name, details, prices, and watermark)
+        function drawContent() {
+            // Draw service name
+            ctx.font = `bold ${subtitleSize}px "Times New Roman"`;
+            ctx.fillStyle = '#000000';
+            
+            // Handle long service names by wrapping text
+            const maxLineWidth = width * 0.8;
+            const serviceNameLines = wrapText(ctx, previewData.serviceName, maxLineWidth);
+            
+            // Set position for square format
+            let startY = height * 0.32;
+            
+            // Draw each line of the wrapped service name
+            let y = startY;
+            const lineHeight = subtitleSize * 1.2;
+            
+            serviceNameLines.forEach(line => {
+                ctx.fillText(line, width / 2, y);
+                y += lineHeight;
+            });
+            
+            // Add some spacing after the service name
+            y += lineHeight * 1.0;
+            
+            // Calculate line height for service details
+            const serviceLineHeight = serviceDetailSize * 1.5;
+            
+            // Add extra spacing before service details for square format
+            y += lineHeight * 0.5;
+            
+            // Draw each service detail
+            previewData.services.forEach((service) => {
+                // Create the price text with the currency symbol
+                const priceText = `₹${service.price}`;
+                
+                // Set up fonts for measurement
+                const serviceFont = `${serviceDetailSize * 1.2}px "Times New Roman"`;
+                const priceFont = `bold ${serviceDetailSize * 1.2}px "Times New Roman"`;
+                
+                // Calculate the center point
+                const centerX = width / 2;
+                
+                // Measure text widths
+                ctx.font = serviceFont;
+                const serviceWidth = ctx.measureText(service.detail).width;
+                
+                ctx.font = priceFont;
+                const priceWidth = ctx.measureText(priceText).width;
+                
+                // Calculate total width and starting positions
+                const totalWidth = serviceWidth + priceWidth + 20; // 20px spacing between service and price
+                const startX = centerX - (totalWidth / 2);
+                
+                // Draw service detail left-aligned from the start position
+                ctx.font = serviceFont;
+                ctx.fillStyle = '#000000';
+                ctx.textAlign = 'left';
+                ctx.fillText(service.detail, startX, y);
+                
+                // Draw price right after the service name
+                ctx.font = priceFont;
+                ctx.fillStyle = '#007bff'; // Blue color for price
+                ctx.fillText(priceText, startX + serviceWidth + 20, y); // 20px spacing
+                
+                // Move to next service with spacing
+                y += serviceLineHeight * 0.8; // Reduced spacing between services
+            });
+            
+            // Draw watermark
+            ctx.font = `${detailSize * 0.7}px "Times New Roman"`;
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.textAlign = 'center'; // Ensure text alignment is set to center
+            ctx.fillText('Viralgurux', width / 2, height * 0.95);
+        }
+        
+        // Choose which logo to draw based on category
+        if (previewData.category === 'Instagram') {
+            drawLogo(instagramLogoSVG);
+        } else if (previewData.category === 'Facebook') {
+            drawLogo(facebookLogoSVG);
+        } else if (previewData.category === 'YouTube') {
+            drawLogo(youtubeLogoSVG);
+        } else {
+            // Draw the category name as text for other categories
+            ctx.font = `bold ${titleSize}px "Times New Roman"`;
+            ctx.fillStyle = '#000000';
+            ctx.fillText(previewData.category, width / 2, logoY + logoSize/2); // Y position for text if no logo
+            drawContent(); // Draw other text immediately
         }
     }
 
@@ -564,6 +789,13 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
         
+        // Add event listeners to the reset service inputs
+        const serviceDetailInput = document.querySelector('#service0');
+        const priceInput = document.querySelector('#price0');
+        
+        serviceDetailInput.addEventListener('input', updateLivePreview);
+        priceInput.addEventListener('input', updateLivePreview);
+        
         // Reset service counter
         serviceCounter = 1;
 
@@ -593,6 +825,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Force reflow
             window.getComputedStyle(mainForm).transform;
         }
+        
+        // Update the preview
+        updateLivePreview();
     }
 
     // No longer need the createSVGElement function as we're using inline SVG
