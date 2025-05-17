@@ -295,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
             case 'portrait':
                 width = 1080;
-                height = 1350;
+                height = 1920;
                 break;
             default:
                 width = 1080;
@@ -340,7 +340,16 @@ document.addEventListener('DOMContentLoaded', () => {
         // Draw logo based on category
         const logoSize = Math.floor(width * 0.15); // Small size for the logo (15% of width)
         const logoX = width / 2 - logoSize / 2;
-        const logoY = height * 0.05; // Position logo higher up
+        
+        // Adjust logo Y position based on format
+        let logoY;
+        if (formData.format === 'square') {
+            logoY = height * 0.08; // Position logo higher in square format
+        } else if (formData.format === 'portrait') {
+            logoY = height * 0.1; // Position for portrait mode
+        } else {
+            logoY = height * 0.1; // Default position for other formats
+        }
 
         function drawLogo(logoSVG) {
             // Create a temporary image to draw the SVG
@@ -367,7 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             // Draw the category name as text for other categories
             ctx.font = `bold ${titleSize}px "Times New Roman"`;
-            ctx.fillText(formData.category, width / 2, height * 0.1); // Y position for text if no logo
+            ctx.fillText(formData.category, width / 2, logoY + logoSize/2); // Y position for text if no logo
             drawRemainingContent(); // Draw other text immediately
         }
 
@@ -379,8 +388,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const maxLineWidth = width * 0.8;
             const serviceNameLines = wrapText(ctx, formData.serviceName, maxLineWidth);
 
+            // Adjust vertical position based on format
+            let startY;
+            if (formData.format === 'portrait') {
+                startY = height * 0.25; // Adjusted for 9:16 ratio
+            } else if (formData.format === 'square') {
+                startY = height * 0.32; // Increased spacing for square format
+            } else {
+                startY = height * 0.28; // Original position for landscape format
+            }
+            
             // Draw each line of the wrapped service name
-            let y = height * 0.28; // Increased vertical position for service name
+            let y = startY;
             const lineHeight = subtitleSize * 1.2;
 
             serviceNameLines.forEach(line => {
@@ -393,6 +412,12 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Calculate line height for service details
             const serviceLineHeight = serviceDetailSize * 2;
+            
+            // Adjust spacing for service details based on format
+            if (formData.format === 'square') {
+                // For square format, add extra spacing before service details
+                y += lineHeight * 0.5;
+            }
             
             // Draw each service detail
             formData.services.forEach((service, index) => {
@@ -436,7 +461,16 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.font = `${detailSize * 0.7}px "Times New Roman"`;
             ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
             ctx.textAlign = 'center'; // Ensure text alignment is set to center
-            ctx.fillText('Viralgurux', width / 2, height * 0.95);
+            
+            // Adjust watermark position based on format
+            let watermarkY;
+            if (formData.format === 'portrait') {
+                watermarkY = height * 0.97; // Adjusted for 9:16 ratio
+            } else {
+                watermarkY = height * 0.95; // Original position for other formats
+            }
+            
+            ctx.fillText('Viralgurux', width / 2, watermarkY);
         }
     }
 

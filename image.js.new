@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
             case 'portrait':
                 width = 1080;
-                height = 1350;
+                height = 1920;
                 break;
             default:
                 width = 1080;
