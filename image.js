@@ -186,6 +186,17 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Store format for later use
             formData.format = promptData.format || 'square';
+            
+            // Display the main form to allow editing instead of showing format selection
+            mainForm.style.display = 'block';
+            formatSelection.style.display = 'none';
+            canvasContainer.style.display = 'none';
+            
+            // Show a notification that the image is loaded for editing
+            showNotification('Image loaded from history. You can now edit the details.', 'info');
+            
+            // Update the preview
+            updateLivePreview();
         } catch (error) {
             console.error('Error loading image from history:', error);
             alert('An error occurred while loading the image from history.');
@@ -865,7 +876,10 @@ document.addEventListener('DOMContentLoaded', () => {
         link.click();
         document.body.removeChild(link);
         
-        // Save to Supabase if available
+        // Check if we're online
+        const isOnline = navigator.onLine;
+        
+        // Save to Supabase if available and online
         if (typeof saveImageToHistory === 'function') {
             try {
                 // Prepare image data for saving
@@ -877,16 +891,31 @@ document.addEventListener('DOMContentLoaded', () => {
                     imageDataUrl: imageDataUrl
                 };
                 
-                // Save to Supabase
-                const result = await saveImageToHistory(imageData);
-                
-                if (!result.success) {
-                    console.error('Failed to save image to history:', result.error);
+                if (isOnline) {
+                    // Save to Supabase
+                    const result = await saveImageToHistory(imageData);
+                    
+                    if (!result.success) {
+                        console.error('Failed to save image to history:', result.error);
+                        // Show offline notification if that's the reason
+                        if (result.offline) {
+                            showNotification('You are offline. Image saved locally only.', 'warning');
+                            saveImageToLocalStorage(imageData);
+                        } else {
+                            showNotification('Failed to save image to history.', 'error');
+                        }
+                    } else {
+                        console.log('Image saved to history successfully');
+                        showNotification('Image saved successfully!', 'info');
+                    }
                 } else {
-                    console.log('Image saved to history successfully');
+                    // We're offline, save to local storage
+                    showNotification('You are offline. Image saved locally only.', 'warning');
+                    saveImageToLocalStorage(imageData);
                 }
             } catch (error) {
                 console.error('Error saving image to history:', error);
+                showNotification('Error saving image.', 'error');
             }
         } else {
             console.warn('saveImageToHistory function not available');
@@ -896,6 +925,91 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             window.location.href = 'history.html';
         }, 500);
+    }
+    
+    // Function to show notification
+    function showNotification(message, type = 'info') {
+        // Create notification element if it doesn't exist
+        let notification = document.getElementById('notification');
+        if (!notification) {
+            notification = document.createElement('div');
+            notification.id = 'notification';
+            notification.className = `notification ${type}`;
+            document.body.appendChild(notification);
+            
+            // Add style for notifications
+            const style = document.createElement('style');
+            style.textContent = `
+                .notification {
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    padding: 10px 20px;
+                    border-radius: 4px;
+                    color: white;
+                    font-weight: bold;
+                    z-index: 1000;
+                    opacity: 0;
+                    transform: translateY(-20px);
+                    transition: opacity 0.3s, transform 0.3s;
+                    max-width: 300px;
+                }
+                .notification.info {
+                    background-color: #007bff;
+                }
+                .notification.warning {
+                    background-color: #ff9800;
+                }
+                .notification.error {
+                    background-color: #dc3545;
+                }
+                .notification.visible {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        // Set message and type
+        notification.textContent = message;
+        notification.className = `notification ${type}`;
+        
+        // Show notification
+        setTimeout(() => {
+            notification.classList.add('visible');
+        }, 10);
+        
+        // Hide notification after 5 seconds
+        setTimeout(() => {
+            notification.classList.remove('visible');
+        }, 5000);
+    }
+    
+    // Function to save image to local storage
+    function saveImageToLocalStorage(imageData) {
+        try {
+            // Get existing offline images or initialize empty array
+            const offlineImages = JSON.parse(localStorage.getItem('offlineImages') || '[]');
+            
+            // Add timestamp and ID to the image data
+            const timestamp = new Date().getTime();
+            const imageWithMeta = {
+                ...imageData,
+                id: `offline-${timestamp}`,
+                created_at: new Date().toISOString()
+            };
+            
+            // Add to offline images array
+            offlineImages.push(imageWithMeta);
+            
+            // Save back to local storage (limit to last 10 images to avoid storage issues)
+            localStorage.setItem('offlineImages', JSON.stringify(offlineImages.slice(-10)));
+            
+            console.log('Image saved to local storage successfully');
+        } catch (error) {
+            console.error('Error saving image to local storage:', error);
+        }
     }
 
     // Initialize social media buttons
