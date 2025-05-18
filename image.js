@@ -9,6 +9,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageCanvas = document.getElementById('imageCanvas');
     const servicesList = document.getElementById('servicesList');
     const addServiceBtn = document.getElementById('addServiceBtn');
+    
+    // Check if we're loading from history
+    const urlParams = new URLSearchParams(window.location.search);
+    const imageId = urlParams.get('id');
+    
     // Add preview canvas element
     const previewContainer = document.createElement('div');
     previewContainer.id = 'previewContainer';
@@ -25,7 +30,18 @@ document.addEventListener('DOMContentLoaded', () => {
     previewContainer.appendChild(previewTitle);
     previewContainer.appendChild(previewCanvas);
     mainForm.appendChild(previewContainer);
-
+    
+    // Add history button
+    const historyBtn = document.createElement('a');
+    historyBtn.href = 'history.html';
+    historyBtn.className = 'btn btn-secondary';
+    historyBtn.style.cssText = 'margin-top: 10px; margin-left: 10px;';
+    historyBtn.textContent = 'View History';
+    
+    // Add the history button after the submit button
+    const submitFormBtnParent = submitFormBtn.parentNode;
+    submitFormBtnParent.insertBefore(historyBtn, submitFormBtn.nextSibling);
+    
     // Form input elements
     const categoryInput = document.getElementById('category');
     const serviceNameInput = document.getElementById('serviceName');
@@ -57,9 +73,124 @@ document.addEventListener('DOMContentLoaded', () => {
         // Show preview container
         previewContainer.style.display = 'block';
         
-        // Initialize preview
-        updateLivePreview();
+        // Check if we're loading from history
+        if (imageId) {
+            loadImageFromHistory(imageId);
+        } else {
+            // Initialize preview
+            updateLivePreview();
+        }
     });
+    
+    // Function to load image from history
+    async function loadImageFromHistory(id) {
+        try {
+            // Check if Supabase client is available
+            if (typeof getImageById !== 'function') {
+                console.error('Supabase client not initialized');
+                return;
+            }
+            
+            // Get image data from Supabase
+            const result = await getImageById(id);
+            
+            if (!result.success || !result.data) {
+                alert('Failed to load image from history. Please try again.');
+                return;
+            }
+            
+            const imageData = result.data;
+            const promptData = imageData.prompt_data || {};
+            
+            // Populate form with image data
+            categoryInput.value = promptData.category || 'Instagram';
+            serviceNameInput.value = imageData.service_name || '';
+            
+            // Update social media button selection
+            const socialButtons = document.querySelectorAll('.social-btn');
+            socialButtons.forEach(btn => {
+                btn.classList.remove('selected');
+                if (btn.dataset.value === promptData.category) {
+                    btn.classList.add('selected');
+                }
+            });
+            
+            // Clear existing services
+            servicesList.innerHTML = '';
+            
+            // Add services from image data
+            if (promptData.services && Array.isArray(promptData.services)) {
+                promptData.services.forEach((service, index) => {
+                    const serviceItem = document.createElement('div');
+                    serviceItem.className = 'service-item';
+                    
+                    // Add remove button if not the first service or if there will be multiple services
+                    if (index > 0 || promptData.services.length > 1) {
+                        serviceItem.innerHTML = `
+                            <button type="button" class="remove-service">&times;</button>
+                            <div class="form-group">
+                                <label for="service${index}">Service Details</label>
+                                <input type="text" id="service${index}" class="form-control service-detail" value="${service.detail}" placeholder="e.g. 500 followers">
+                            </div>
+                            <div class="form-group">
+                                <label for="price${index}">Price</label>
+                                <div class="price-input-container">
+                                    <input type="text" id="price${index}" class="form-control price-input" value="${service.price}" placeholder="Enter price" min="0">
+                                    <span class="price-currency">₹</span>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        serviceItem.innerHTML = `
+                            <div class="form-group">
+                                <label for="service${index}">Service Details</label>
+                                <input type="text" id="service${index}" class="form-control service-detail" value="${service.detail}" placeholder="e.g. 500 followers">
+                            </div>
+                            <div class="form-group">
+                                <label for="price${index}">Price</label>
+                                <div class="price-input-container">
+                                    <input type="text" id="price${index}" class="form-control price-input" value="${service.price}" placeholder="Enter price" min="0">
+                                    <span class="price-currency">₹</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    servicesList.appendChild(serviceItem);
+                    
+                    // Add event listeners for inputs to update preview
+                    const serviceDetailInput = serviceItem.querySelector('.service-detail');
+                    const priceInput = serviceItem.querySelector('.price-input');
+                    
+                    serviceDetailInput.addEventListener('input', updateLivePreview);
+                    priceInput.addEventListener('input', updateLivePreview);
+                });
+                
+                // Update service counter
+                serviceCounter = promptData.services.length;
+                
+                // Add event listeners to remove buttons
+                document.querySelectorAll('.remove-service').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        removeService(e);
+                        updateLivePreview();
+                    });
+                });
+                
+                // Update live preview
+                updateLivePreview();
+            } else {
+                // If no services data, just update the preview
+                updateLivePreview();
+            }
+            
+            // Store format for later use
+            formData.format = promptData.format || 'square';
+        } catch (error) {
+            console.error('Error loading image from history:', error);
+            alert('An error occurred while loading the image from history.');
+        }
+    }
 
     // SVG constants for image generation
     const instagramLogoSVG = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="256" height="256" viewBox="0 0 256 256">
@@ -717,7 +848,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Handle image download
-    function handleDownload() {
+    async function handleDownload() {
         // Create a temporary link
         const link = document.createElement('a');
         
@@ -726,16 +857,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Set download attributes
         link.download = `${formData.category}-${safeServiceName}.png`;
-        link.href = imageCanvas.toDataURL('image/png');
+        const imageDataUrl = imageCanvas.toDataURL('image/png');
+        link.href = imageDataUrl;
 
         // Trigger download
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
         
-        // Refresh the page after a short delay to ensure download starts first
+        // Save to Supabase if available
+        if (typeof saveImageToHistory === 'function') {
+            try {
+                // Prepare image data for saving
+                const imageData = {
+                    category: formData.category,
+                    serviceName: formData.serviceName,
+                    services: formData.services,
+                    format: formData.format,
+                    imageDataUrl: imageDataUrl
+                };
+                
+                // Save to Supabase
+                const result = await saveImageToHistory(imageData);
+                
+                if (!result.success) {
+                    console.error('Failed to save image to history:', result.error);
+                } else {
+                    console.log('Image saved to history successfully');
+                }
+            } catch (error) {
+                console.error('Error saving image to history:', error);
+            }
+        } else {
+            console.warn('saveImageToHistory function not available');
+        }
+        
+        // Redirect to history page after a short delay to ensure download starts first
         setTimeout(() => {
-            window.location.reload();
+            window.location.href = 'history.html';
         }, 500);
     }
 

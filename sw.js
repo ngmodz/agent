@@ -8,9 +8,12 @@ const NETWORK_FIRST_ASSETS = [
   './',
   './index.html',
   './image.html',
+  './history.html',
   './style.css',
   './script.js',
   './image.js',
+  './history.js',
+  './supabaseClient.js',
   './page-transitions.js',
   './services.json'
 ];
